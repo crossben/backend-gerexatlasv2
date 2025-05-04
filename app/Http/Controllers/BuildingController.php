@@ -104,7 +104,7 @@ class BuildingController extends Controller
             'message' => 'Building deleted successfully!',
         ], 200);
     }
-    public function getBuilding(Request $request)
+    public function getBuildingById(Request $request)
     {
         $request->validate([
             'building_id' => 'required|exists:buildings,id',
@@ -119,7 +119,19 @@ class BuildingController extends Controller
             'data' => $building,
         ], 200);
     }
-    public function getBuildingsByManager(Request $request)
+
+    public function getAllBuildings(Request $request)
+    {
+        // Get all buildings
+        $buildings = Building::all();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All buildings retrieved successfully!',
+            'data' => $buildings,
+        ], 200);
+    }
+    public function getBuildingsByManagerId(Request $request)
     {
         $request->validate([
             'manager_id' => 'required|exists:managers,id',
@@ -131,17 +143,6 @@ class BuildingController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Buildings retrieved successfully!',
-            'data' => $buildings,
-        ], 200);
-    }
-    public function getAllBuildings(Request $request)
-    {
-        // Get all buildings
-        $buildings = Building::all();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'All buildings retrieved successfully!',
             'data' => $buildings,
         ], 200);
     }

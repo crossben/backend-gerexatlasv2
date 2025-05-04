@@ -201,7 +201,7 @@ class DatabaseSeeder extends Seeder
             'unit_id' => 1,
             'tenant_id' => 1,
             'receipt' => 'hehe boi',
-            'payment_method' => 'credit_card',
+            'payement_method' => 'credit_card',
             'reference' => 'PAYMENT123',
             'status' => 'completed',
         ]);
@@ -211,7 +211,7 @@ class DatabaseSeeder extends Seeder
             'unit_id' => 2,
             'tenant_id' => 2,
             'receipt' => 'ehbfebfe',
-            'payment_method' => 'orange money',
+            'payement_method' => 'orange money',
             'reference' => 'PAYMENT456',
             'status' => 'completed',
         ]);

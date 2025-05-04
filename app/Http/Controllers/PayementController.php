@@ -10,20 +10,24 @@ class PayementController extends Controller
     public function createPayment(Request $request)
     {
         $request->validate([
-            'contract_id' => 'required|exists:contracts,id',
+            'unit_id' => 'required|exists:units,id',
+            'tenant_id' => 'required|exists:tenants,id',
+            'receipt' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'payment_date' => 'required|date',
-            'payment_method' => 'required|string|max:255',
+            'payement_method' => 'required|string|max:255',
+            'reference' => 'required|string|max:255',
             'status' => 'nullable|string|in:paid,pending,failed|max:50',
         ]);
 
         // Create a new payment
         $payment = new Payement();
-        $payment->contract_id = $request->contract_id;
+        $payment->unit_id = $request->unit_id;
+        $payment->tenant_id = $request->tenant_id;
+        $payment->receipt = $request->receipt;
         $payment->amount = $request->amount;
-        $payment->payment_date = $request->payment_date;
-        $payment->payment_method = $request->payment_method;
-        $payment->status = $request->status ?? 'pending'; // Default status to pending if not provided
+        $payment->payement_method = $request->payement_method;
+        $payment->reference = $request->reference;
+        $payment->status = $request->status ?? 'pending'; // Default to 'pending' if not provided
         $payment->save();
 
         return response()->json([
@@ -33,26 +37,38 @@ class PayementController extends Controller
         ], 201);
     }
 
-    public function updatePayement(Request $request)
+    public function updatePayment(Request $request)
     {
         $request->validate([
-            'payment_id' => 'required|exists:payments,id',
-            'amount' => 'nullable|numeric|min:0',
-            'payment_date' => 'nullable|date',
-            'payment_method' => 'nullable|string|max:255',
+            'payement_id' => 'required|exists:payements,id',
+            'unit_id' => 'required|exists:units,id',
+            'tenant_id' => 'required|exists:tenants,id',
+            'receipt' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0',
+            'payement_method' => 'required|string|max:255',
+            'reference' => 'nullable|string|max:255',
             'status' => 'nullable|string|in:paid,pending,failed|max:50',
         ]);
 
         // Update the payment
-        $payment = Payement::find($request->payment_id);
+        $payment = Payement::find($request->payement_id);
+        if ($request->has('unit_id')) {
+            $payment->unit_id = $request->unit_id;
+        }
+        if ($request->has('tenant_id')) {
+            $payment->tenant_id = $request->tenant_id;
+        }
+        if ($request->has('receipt')) {
+            $payment->receipt = $request->receipt;
+        }
         if ($request->has('amount')) {
             $payment->amount = $request->amount;
         }
-        if ($request->has('payment_date')) {
-            $payment->payment_date = $request->payment_date;
+        if ($request->has('payement_method')) {
+            $payment->payement_method = $request->payement_method;
         }
-        if ($request->has('payment_method')) {
-            $payment->payment_method = $request->payment_method;
+        if ($request->has('reference')) {
+            $payment->reference = $request->reference;
         }
         if ($request->has('status')) {
             $payment->status = $request->status;
@@ -69,11 +85,11 @@ class PayementController extends Controller
     public function deletePayement(Request $request)
     {
         $request->validate([
-            'payment_id' => 'required|exists:payments,id',
+            'payement_id' => 'required|exists:payements,id',
         ]);
 
         // Delete the payment
-        $payment = Payement::find($request->payment_id);
+        $payment = Payement::find($request->payement_id);
         $payment->delete();
 
         return response()->json([
@@ -81,16 +97,16 @@ class PayementController extends Controller
             'message' => 'Payment deleted successfully!',
         ], 200);
     }
-    public function getPayment(Request $request)
+    public function getPaymentById(Request $request)
     {
         $request->validate([
-            'payment_id' => 'required|exists:payments,id',
+            'payement_id' => 'required|exists:payements,id',
         ]);
 
         // Get the payment details
-        $payment = Payement::find($request->payment_id);
+        $payment = Payement::find($request->payement_id);
 
-        \Log::info('Payment retrieved', ['payment_id' => $payment->id]);
+        \Log::info('Payment retrieved', ['payement_id' => $payment->id]);
 
         return response()->json([
             'status' => 'success',

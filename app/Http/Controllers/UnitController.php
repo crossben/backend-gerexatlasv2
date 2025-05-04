@@ -11,21 +11,21 @@ class UnitController extends Controller
     {
         $request->validate([
             'building_id' => 'required|exists:buildings,id',
-            'unit_number' => 'required|string|max:255',
-            'size' => 'nullable|numeric|min:0',
-            'bedrooms' => 'nullable|integer|min:0',
-            'bathrooms' => 'nullable|integer|min:0',
+            'name' => 'required|string|max:255',
+            'surface' => 'nullable|numeric|min:0',
+            'type' => 'nullable|string|max:255',
             'status' => 'nullable|string|in:available,rented,under_maintenance|max:50',
+            'reference' => 'nullable|string|max:255',
         ]);
 
         // Create a new unit
-        $unit = new Unit();
+        $unit = new Unit(); 
         $unit->building_id = $request->building_id;
-        $unit->unit_number = $request->unit_number;
-        $unit->size = $request->size;
-        $unit->bedrooms = $request->bedrooms;
-        $unit->bathrooms = $request->bathrooms;
+        $unit->name = $request->name;
+        $unit->surface = $request->surface;
+        $unit->type = $request->type;
         $unit->status = $request->status ?? 'available'; // Default status to available if not provided
+        $unit->reference = $request->reference;
         $unit->save();
 
         return response()->json([
@@ -39,29 +39,36 @@ class UnitController extends Controller
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
-            'unit_number' => 'nullable|string|max:255',
-            'size' => 'nullable|numeric|min:0',
-            'bedrooms' => 'nullable|integer|min:0',
-            'bathrooms' => 'nullable|integer|min:0',
+            'building_id' => 'required|exists:buildings,id',
+            'name' => 'required|string|max:255',
+            'surface' => 'nullable|numeric|min:0',
+            'type' => 'nullable|string|max:255',
             'status' => 'nullable|string|in:available,rented,under_maintenance|max:50',
+            'reference' => 'nullable|string|max:255',
         ]);
 
         // Update the unit
         $unit = Unit::find($request->unit_id);
-        if ($request->has('unit_number')) {
-            $unit->unit_number = $request->unit_number;
+        if ($request->has('building_id')) {
+            $unit->building_id = $request->building_id;
         }
-        if ($request->has('size')) {
-            $unit->size = $request->size;
+        if ($request->has('tenant_id')) {
+            $unit->tenant_id = $request->tenant_id;
         }
-        if ($request->has('bedrooms')) {
-            $unit->bedrooms = $request->bedrooms;
+        if ($request->has('name')) {
+            $unit->name = $request->name;
         }
-        if ($request->has('bathrooms')) {
-            $unit->bathrooms = $request->bathrooms;
+        if ($request->has('surface')) {
+            $unit->surface = $request->surface;
+        }
+        if ($request->has('type')) {
+            $unit->type = $request->type;
         }
         if ($request->has('status')) {
             $unit->status = $request->status;
+        }
+        if ($request->has('reference')) {
+            $unit->reference = $request->reference;
         }
         $unit->save();
 
@@ -86,7 +93,7 @@ class UnitController extends Controller
             'message' => 'Unit deleted successfully!',
         ], 200);
     }
-    public function getUnit(Request $request)
+    public function getUnitById(Request $request)
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
@@ -101,7 +108,7 @@ class UnitController extends Controller
             'data' => $unit,
         ], 200);
     }
-    public function getUnitsByBuilding(Request $request)
+    public function getUnitsByBuildingId(Request $request)
     {
         $request->validate([
             'building_id' => 'required|exists:buildings,id',

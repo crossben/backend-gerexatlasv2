@@ -26,7 +26,6 @@ class Unit extends Model
 
     protected $fillable = [
         'building_id',
-        'tenant_id',
         'name',
         'surface',
         'type',

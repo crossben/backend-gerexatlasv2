@@ -12,11 +12,12 @@ return new class extends Migration {
     {
         Schema::create('payements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('unit_id')->constrained()->onDelete('cascade');
+            $table->foreignId('unit_id')->constrained()->onDelete('cascade'); 
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('building_id')->constrained()->onDelete('cascade');
             $table->string('receipt');
             $table->decimal('amount', 10, 2);
-            $table->string('payment_method')->nullable();
+            $table->string('payement_method')->nullable();
             $table->string('reference')->unique();
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->timestamps();

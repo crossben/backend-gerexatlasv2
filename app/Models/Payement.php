@@ -25,16 +25,15 @@ class Payement extends Model
     protected $fillable = [
         'unit_id',
         'tenant_id',
+        'building_id',
         'receipt',
         'amount',
-        'date',
-        'method',
+        'payement_method',
         'reference',
         'status',
     ];
 
     protected $casts = [
-        'date' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'reference' => 'string',
@@ -44,7 +43,6 @@ class Payement extends Model
         'status' => 'pending',
     ];
     protected $dates = [
-        'date',
         'created_at',
         'updated_at',
     ];

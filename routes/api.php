@@ -18,22 +18,30 @@ Route::get('/user', function (Request $request) {
 // Route::middleware('auth:sanctum')->group(function () {
 
 // building routes
-Route::post('/buildings/create', [BuildingController::class, 'createBuilding']);
-Route::put('/buildings/update/{id}', [BuildingController::class, 'updateBuilding']);
-Route::delete('/buildings', [BuildingController::class, 'deleteBuilding']);
-Route::get('/buildings', [BuildingController::class, 'getBuildings']);
+Route::post('/buildings/create', [BuildingController::class, 'createBuilding']); // tested
+Route::put('/buildings/update/{id}', [BuildingController::class, 'updateBuilding']); // tested
+Route::delete('/buildings/delete/{id}', [BuildingController::class, 'deleteBuilding']); // tested
+Route::get('/buildings', [BuildingController::class, 'getAllBuildings']); // tested
+Route::get('/buildings/{id}', [BuildingController::class, 'getBuildingById']); // tested
+Route::get('/buildings/manager/{id}', [BuildingController::class, 'getBuildingsByManagerId']); // tested
 
 // unit routes
-Route::post('/units/create', [UnitController::class, 'createUnit']);
-Route::put('/units/update/{id}', [UnitController::class, 'updateUnit']);
-Route::delete('/units', [UnitController::class, 'deleteUnit']);
-Route::get('/units', [UnitController::class, 'getUnits']);
+Route::post('/units/create', [UnitController::class, 'createUnit']); // tested
+Route::put('/units/update/{id}', [UnitController::class, 'updateUnit']); // tested
+Route::delete('/units/delete/{id}', [UnitController::class, 'deleteUnit']);  // tested
+Route::get('/units', [UnitController::class, 'getAllUnits']); // tested
+Route::get('/units/{id}', [UnitController::class, 'getUnitById']); // tested
+Route::get('/units/building/{id}', [UnitController::class, 'getUnitsByBuildingId']); // tested
+
 
 // payment routes
-Route::post('/payments/create', [PayementController::class, 'createPayment']);
-Route::put('/payments/update/{id}', [PayementController::class, 'updatePayment']);
-Route::delete('/payments', [PayementController::class, 'deletePayment']);
-Route::get('/payments', [PayementController::class, 'getPayments']);
+Route::post('/payments/create', [PayementController::class, 'createPayment']); // tested
+Route::put('/payments/update/{id}', [PayementController::class, 'updatePayment']); // tested
+Route::delete('/payments/delete/', [PayementController::class, 'deletePayement']);  // tested
+Route::get('/payments/{id}', [PayementController::class, 'getPaymentById']); // tested
+Route::get('/payments/unit/{id}', [PayementController::class, 'getPaymentsByUnitId']);
+Route::get('/payments/tenant/{id}', [PayementController::class, 'getPaymentsByTenantId']);
+Route::get('/payments', [PayementController::class, 'getAllPayments']);
 
 
 // contact routes
