@@ -16,7 +16,7 @@ class UserResource extends Resource
     protected static ?string $chart = UserChart::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationGroup = 'Human Resources';
     protected static ?string $navigationLabel = 'Users';
 
     public static function form(Form $form): Form

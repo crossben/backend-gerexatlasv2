@@ -15,7 +15,7 @@ class ManagerResource extends Resource
     protected static ?string $model = Manager::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Management';
+    protected static ?string $navigationGroup = 'Human Resources';
     protected static ?string $navigationLabel = 'Managers';
     protected static ?string $modelLabel = 'Manager';
     protected static ?string $pluralModelLabel = 'Managers';
