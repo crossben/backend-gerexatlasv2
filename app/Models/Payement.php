@@ -22,6 +22,11 @@ class Payement extends Model
         return $this->belongsTo(Unit::class);
     }
 
+    public function building()
+    {
+        return $this->belongsTo(Building::class);
+    }
+
     protected $fillable = [
         'unit_id',
         'tenant_id',

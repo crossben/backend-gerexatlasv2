@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class ManagerResource extends Resource
 {
@@ -131,14 +133,35 @@ class ManagerResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('created_today')
+                    ->label('Aujourd\'hui')
+                    ->query(fn(Builder $query): Builder => $query->whereDate('created_at', now()->toDateString())),
+                Tables\Filters\Filter::make('created_this_week')
+                    ->label('Cette semaine')
+                    ->query(fn(Builder $query): Builder => $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])),
+                Tables\Filters\Filter::make('created_this_month')
+                    ->label('Ce mois-ci')
+                    ->query(fn(Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
+                Tables\Filters\Filter::make('created_this_year')
+                    ->label('Cette année')
+                    ->query(fn(Builder $query): Builder => $query->whereYear('created_at', now()->year)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Create')
+                    ->icon('heroicon-o-plus')
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                Tables\Actions\ViewAction::make()
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin')
                 ]),
             ]);
     }
@@ -157,5 +180,30 @@ class ManagerResource extends Resource
             'create' => Pages\CreateManager::route('/create'),
             'edit' => Pages\EditManager::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin';
+    }
+
+    public static function canView($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
     }
 }

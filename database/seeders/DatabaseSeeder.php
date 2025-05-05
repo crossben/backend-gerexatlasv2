@@ -23,8 +23,16 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         User::create([
-            "name" => "Admin",
-            'email' => 'admin@gerexatlas.com',
+            "name" => "Ben hattab Mahdi",
+            'email' => 'ben@gerexatlas.com',
+            'password' => '12334567',
+            'role' => 'ultra_admin',
+            'status' => 'active',
+        ]);
+
+        User::create([
+            "name" => "Ben hattab Mahdi",
+            'email' => 'ben2@gerexatlas.com',
             'password' => '12334567',
             'role' => 'admin',
             'status' => 'active',
@@ -200,6 +208,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1000,
             'unit_id' => 1,
             'tenant_id' => 1,
+            'building_id' => 1,
             'receipt' => 'hehe boi',
             'payement_method' => 'credit_card',
             'reference' => 'PAYMENT123',
@@ -210,6 +219,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1200,
             'unit_id' => 2,
             'tenant_id' => 2,
+            'building_id' => 2,
             'receipt' => 'ehbfebfe',
             'payement_method' => 'orange money',
             'reference' => 'PAYMENT456',
