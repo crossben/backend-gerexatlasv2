@@ -63,20 +63,20 @@ class ContractResource extends Resource
                     ]),
                 Forms\Components\Section::make('Important Documents')
                     ->schema([
-                        Forms\Components\RichEditor::make('contract_body')
-                            ->label('Contract Body')
-                            ->required()
-                            ->columnSpan('full')
-                            ->disableToolbarButtons([
-                                'attachFiles',
-                                'codeBlock',
-                                'h1',
-                                'h2',
-                                'h3',
-                                'h4',
-                                'h5',
-                                'h6',
-                            ]),
+                        // Forms\Components\RichEditor::make('contract_body')
+                        //     ->label('Contract Body')
+                        //     ->required()
+                        //     ->columnSpan('full')
+                        //     ->disableToolbarButtons([
+                        //         'attachFiles',
+                        //         'codeBlock',
+                        //         'h1',
+                        //         'h2',
+                        //         'h3',
+                        //         'h4',
+                        //         'h5',
+                        //         'h6',
+                        //     ]),
                         Forms\Components\Select::make('contract_type')
                             ->required()
                             ->label('Contract Type')

@@ -99,8 +99,8 @@ class UnitController extends Controller
             'unit_id' => 'required|exists:units,id',
         ]);
 
-        // Get the unit
-        $unit = Unit::find($request->unit_id);
+        // Get the unit with its associated building
+        $unit = Unit::with('building')->find($request->unit_id);
 
         if (!$unit) {
             return response()->json([
@@ -109,8 +109,8 @@ class UnitController extends Controller
             ], 404);
         }
 
-        \Log::info('Unit retrieved', ['unit_id' => $unit->id]);
-        \Log::debug('Retrieved unit details', $unit->toArray());
+        \Log::info('Unit retrieved with building', ['unit_id' => $unit->id]);
+        \Log::debug('Retrieved unit details with building', $unit->toArray());
 
         return response()->json([
             'status' => 'success',
@@ -163,6 +163,7 @@ class UnitController extends Controller
             'data' => $units,
         ], 200);
     }
+
     public function getUnitsByStatus(Request $request)
     {
         $request->validate([
@@ -187,6 +188,7 @@ class UnitController extends Controller
             'data' => $units,
         ], 200);
     }
+
     public function getUnitsByTenant(Request $request)
     {
         $request->validate([
@@ -211,6 +213,7 @@ class UnitController extends Controller
             'data' => $units,
         ], 200);
     }
+
     public function getUnitsByContract(Request $request)
     {
         $request->validate([

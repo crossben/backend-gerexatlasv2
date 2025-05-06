@@ -16,7 +16,7 @@ class TenantController extends Controller
             'phone' => 'required|string|max:20',
             'nationality' => 'nullable|string|max:255',
             'reference' => 'nullable|string|max:255',
-            'status' => 'nullable|in:active,inactive,suspended|max:50',
+            'status' => 'nullable|in:active,inactive,suspended',
         ]);
 
         // Create a new tenant
@@ -27,7 +27,7 @@ class TenantController extends Controller
         $tenant->phone = $request->phone;
         $tenant->nationality = $request->nationality;
         $tenant->reference = $request->reference;
-        $tenant->status = $request->status ?? 'active';
+        $tenant->status = $request->status ?? 'active'; // Ensure default matches validation
         $tenant->save();
 
         \Log::info('Tenant created', ['tenant_id' => $tenant->id]);
@@ -123,6 +123,7 @@ class TenantController extends Controller
         $tenant = Tenant::find($request->tenant_id);
 
         if (!$tenant) {
+            \Log::warning('Tenant not found', ['tenant_id' => $request->tenant_id]);
             return response()->json([
                 'status' => 'error',
                 'message' => 'Tenant not found!',

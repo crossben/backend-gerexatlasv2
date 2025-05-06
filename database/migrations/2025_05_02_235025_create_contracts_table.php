@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
             $table->string('contract_type')->nullable();
-            $table->string('contract_body');
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->decimal('rent_amount', 10, 2);

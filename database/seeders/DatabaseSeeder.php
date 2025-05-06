@@ -145,6 +145,7 @@ class DatabaseSeeder extends Seeder
 
         Tenant::create([
             'unit_id' => 1,
+            'building_id' => 1,
             'name' => 'Tenant 1',
             'email' => 'tenant1@example.com',
             'reference' => 'TENANT123',
@@ -153,6 +154,7 @@ class DatabaseSeeder extends Seeder
 
         Tenant::create([
             'unit_id' => 2,
+            'building_id' => 2,
             'name' => 'Tenant 2',
             'email' => 'tenant2@example.com',
             'phone' => '123-456-7890',
@@ -164,7 +166,6 @@ class DatabaseSeeder extends Seeder
             'tenant_id' => 1,
             'unit_id' => 1,
             'contract_type' => 'Lease',
-            'contract_body' => 'This is a sample contract body.',
             'start_date' => now(),
             'end_date' => now()->addYear(),
             'rent_amount' => 1000,
@@ -175,7 +176,6 @@ class DatabaseSeeder extends Seeder
             'tenant_id' => 2,
             'unit_id' => 2,
             'contract_type' => 'hehe boi',
-            'contract_body' => 'contract body',
             'start_date' => now(),
             'end_date' => now()->addYear(),
             'rent_amount' => 1200,

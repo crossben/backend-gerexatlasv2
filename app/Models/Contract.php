@@ -28,7 +28,6 @@ class Contract extends Model
         'tenant_id',
         'unit_id',
         'contract_type',
-        'contract_body',
         'start_date',
         'end_date',
         'rent_amount',

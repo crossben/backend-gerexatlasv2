@@ -47,23 +47,26 @@ Route::get('/payments', [PayementController::class, 'getAllPayments']); // teste
 
 // contact routes
 Route::post('/contacts', [ContactController::class, 'Contact']); // tested
+
 // });
 
 // manager routes 
 Route::post('/managers/create', [ManagerController::class, 'RegisterManager']);
 Route::put('/managers/update/{id}', [ManagerController::class, 'updateManager']);
-Route::delete('/managers/delete/{id}', [ManagerController::class, 'deleteManager']); // updated
-Route::get('/managers', [ManagerController::class, 'getManagers']);
+Route::delete('/managers/delete/{id}', [ManagerController::class, 'deleteManager']);
+Route::get('/managers', [ManagerController::class, 'getManagers']); 
 
 // tenant routes
-Route::post('/tenants/create', [TenantController::class, 'createTenant']);
-Route::put('/tenants/update/{id}', [TenantController::class, 'updateTenant']);
-Route::delete('/tenants', [TenantController::class, 'deleteTenant']);
-Route::get('/tenants', [TenantController::class, 'getTenants']);
+Route::post('/tenants/create', [TenantController::class, 'createTenant']); // tested
+Route::put('/tenants/update/{id}', [TenantController::class, 'updateTenant']); // tested
+Route::delete('/tenants/delete/{id}', [TenantController::class, 'deleteTenant']); // tested
+Route::get('/tenants/{id}', [TenantController::class, 'getTenantById']); // tested 
+Route::get('/tenants', [TenantController::class, 'getAllTenants']); // tested
+Route::get('/tenants/building/{id}', [TenantController::class, 'getTenantsByBuilding']); // tested
 
 // contract routes
-Route::post('/contracts/create', [ContractController::class, 'createContract']);
-Route::put('/contracts/update', [ContractController::class, 'updateContract']);
+Route::post('/contracts/create', [ContractController::class, 'createContract']); // tested
+Route::put('/contracts/update/{id}', [ContractController::class, 'updateContract']);
 Route::delete('/contracts', [ContractController::class, 'deleteContract']);
 Route::get('/contracts', [ContractController::class, 'getContracts']);
 Route::get('/contacts/{id}', [ContactController::class, 'getContactById']);

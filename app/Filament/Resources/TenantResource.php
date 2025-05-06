@@ -34,6 +34,13 @@ class TenantResource extends Resource
                             ->preload()
                             ->label('Unit Name')
                             ->helperText('Choose the appropriate unit from the list.'),
+                        Forms\Components\Select::make('building_id')
+                            ->relationship('building', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->label('Building Name')
+                            ->helperText('Choose the appropriate building from the list.'),
                     ]),
 
                 Forms\Components\Section::make('Personal Information')
