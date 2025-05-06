@@ -10,22 +10,24 @@ class TenantController extends Controller
     public function createTenant(Request $request)
     {
         $request->validate([
+            'unit_id' => 'required|exists:units,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:tenants,email',
             'phone' => 'required|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:active,inactive,suspended|max:50',
+            'nationality' => 'nullable|string|max:255',
+            'reference' => 'nullable|string|max:255',
+            'status' => 'nullable|in:active,inactive,suspended|max:50',
         ]);
 
         // Create a new tenant
         $tenant = new Tenant();
+        $tenant->unit_id = $request->unit_id;
         $tenant->name = $request->name;
         $tenant->email = $request->email;
         $tenant->phone = $request->phone;
-        $tenant->address = $request->address;
-        $tenant->city = $request->city;
-        $tenant->status = $request->status ?? 'active'; // Default status to active if not provided
+        $tenant->nationality = $request->nationality;
+        $tenant->reference = $request->reference;
+        $tenant->status = $request->status ?? 'active';
         $tenant->save();
 
         \Log::info('Tenant created', ['tenant_id' => $tenant->id]);
@@ -44,17 +46,20 @@ class TenantController extends Controller
     public function updateTenant(Request $request)
     {
         $request->validate([
-            'tenant_id' => 'required|exists:tenants,id',
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255|unique:tenants,email,' . $request->tenant_id,
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:active,inactive,suspended|max:50',
+            'unit_id' => 'required|exists:units,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:tenants,email',
+            'phone' => 'required|string|max:20',
+            'nationality' => 'nullable|string|max:255',
+            'reference' => 'nullable|string|max:255',
+            'status' => 'nullable|in:active,inactive,suspended|max:50',
         ]);
 
         // Update the tenant
         $tenant = Tenant::find($request->tenant_id);
+        if ($request->has('unit_id')) {
+            $tenant->unit_id = $request->unit_id;
+        }
         if ($request->has('name')) {
             $tenant->name = $request->name;
         }
@@ -64,11 +69,11 @@ class TenantController extends Controller
         if ($request->has('phone')) {
             $tenant->phone = $request->phone;
         }
-        if ($request->has('address')) {
-            $tenant->address = $request->address;
+        if ($request->has('nationality')) {
+            $tenant->nationality = $request->nationality;
         }
-        if ($request->has('city')) {
-            $tenant->city = $request->city;
+        if ($request->has('reference')) {
+            $tenant->reference = $request->reference;
         }
         if ($request->has('status')) {
             $tenant->status = $request->status;
@@ -93,6 +98,12 @@ class TenantController extends Controller
 
         // Delete the tenant
         $tenant = Tenant::find($request->tenant_id);
+        if (!$tenant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tenant not found!',
+            ], 404);
+        }
         $tenant->delete();
 
         \Log::info('Tenant deleted', ['tenant_id' => $tenant->id]);
@@ -102,7 +113,7 @@ class TenantController extends Controller
             'message' => 'Tenant deleted successfully!',
         ], 200);
     }
-    public function getTenant(Request $request)
+    public function getTenantById(Request $request)
     {
         $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
@@ -110,6 +121,13 @@ class TenantController extends Controller
 
         // Get the tenant details
         $tenant = Tenant::find($request->tenant_id);
+
+        if (!$tenant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tenant not found!',
+            ], 404);
+        }
 
         \Log::info('Tenant retrieved', ['tenant_id' => $tenant->id]);
 
@@ -124,7 +142,13 @@ class TenantController extends Controller
         // Get all tenants
         $tenants = Tenant::all();
 
-        \Log::info('All tenants retrieved');
+        if ($tenants->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tenants found!',
+            ], 404);
+        }
+        \Log::info('All tenants retrieved', ['tenant_count' => $tenants->count()]);
 
         return response()->json([
             'status' => 'success',
@@ -141,6 +165,13 @@ class TenantController extends Controller
         // Get tenants by building
         $tenants = Tenant::where('building_id', $request->building_id)->get();
 
+        if ($tenants->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tenants found for this building!',
+            ], 404);
+        }
+
         \Log::info('Tenants retrieved by building', ['building_id' => $request->building_id]);
 
         return response()->json([
@@ -149,7 +180,7 @@ class TenantController extends Controller
             'data' => $tenants,
         ], 200);
     }
-    public function getTenantsByContract(Request $request)
+    public function getTenantsByContractId(Request $request)
     {
         $request->validate([
             'contract_id' => 'required|exists:contracts,id',
@@ -157,6 +188,13 @@ class TenantController extends Controller
 
         // Get tenants by contract
         $tenants = Tenant::where('contract_id', $request->contract_id)->get();
+
+        if ($tenants->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tenants found for this contract!',
+            ], 404);
+        }
 
         \Log::info('Tenants retrieved by contract', ['contract_id' => $request->contract_id]);
 
@@ -166,7 +204,7 @@ class TenantController extends Controller
             'data' => $tenants,
         ], 200);
     }
-    public function getTenantsByManager(Request $request)
+    public function getTenantsByManagerId(Request $request)
     {
         $request->validate([
             'manager_id' => 'required|exists:managers,id',
@@ -174,6 +212,13 @@ class TenantController extends Controller
 
         // Get tenants by manager
         $tenants = Tenant::where('manager_id', $request->manager_id)->get();
+
+        if ($tenants->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tenants found for this manager!',
+            ], 404);
+        }
 
         \Log::info('Tenants retrieved by manager', ['manager_id' => $request->manager_id]);
 

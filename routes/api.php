@@ -39,19 +39,20 @@ Route::post('/payments/create', [PayementController::class, 'createPayment']); /
 Route::put('/payments/update/{id}', [PayementController::class, 'updatePayment']); // tested
 Route::delete('/payments/delete/', [PayementController::class, 'deletePayement']);  // tested
 Route::get('/payments/{id}', [PayementController::class, 'getPaymentById']); // tested
-Route::get('/payments/unit/{id}', [PayementController::class, 'getPaymentsByUnitId']);
-Route::get('/payments/tenant/{id}', [PayementController::class, 'getPaymentsByTenantId']);
-Route::get('/payments', [PayementController::class, 'getAllPayments']);
+Route::get('/payments/unit/{id}', [PayementController::class, 'getPaymentsByUnitId']); // tested
+Route::get('/payments/tenant/{id}', [PayementController::class, 'getPaymentsByTenantId']); // tested
+Route::get('/payments/building/{id}', [PayementController::class, 'getPaymentsByBuildingId']); // tested
+Route::get('/payments', [PayementController::class, 'getAllPayments']); // tested
 
 
 // contact routes
-Route::post('/contacts', [ContactController::class, 'Contact']);
+Route::post('/contacts', [ContactController::class, 'Contact']); // tested
 // });
 
-// manager routes
-Route::post('/managers/create', [ManagerController::class, 'createManager']);
+// manager routes 
+Route::post('/managers/create', [ManagerController::class, 'RegisterManager']);
 Route::put('/managers/update/{id}', [ManagerController::class, 'updateManager']);
-Route::delete('/managers', [ManagerController::class, 'deleteManager']);
+Route::delete('/managers/delete/{id}', [ManagerController::class, 'deleteManager']); // updated
 Route::get('/managers', [ManagerController::class, 'getManagers']);
 
 // tenant routes

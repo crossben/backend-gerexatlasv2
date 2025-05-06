@@ -19,7 +19,7 @@ class UnitController extends Controller
         ]);
 
         // Create a new unit
-        $unit = new Unit(); 
+        $unit = new Unit();
         $unit->building_id = $request->building_id;
         $unit->name = $request->name;
         $unit->surface = $request->surface;
@@ -102,6 +102,16 @@ class UnitController extends Controller
         // Get the unit
         $unit = Unit::find($request->unit_id);
 
+        if (!$unit) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unit not found!',
+            ], 404);
+        }
+
+        \Log::info('Unit retrieved', ['unit_id' => $unit->id]);
+        \Log::debug('Retrieved unit details', $unit->toArray());
+
         return response()->json([
             'status' => 'success',
             'message' => 'Unit retrieved successfully!',
@@ -117,16 +127,35 @@ class UnitController extends Controller
         // Get units by building
         $units = Unit::where('building_id', $request->building_id)->get();
 
+        if ($units->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No units found for this building!',
+            ], 404);
+        }
+        \Log::info('Units retrieved by building ID', ['building_id' => $request->building_id]);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Units retrieved successfully!',
             'data' => $units,
         ], 200);
     }
+
     public function getAllUnits(Request $request)
     {
         // Get all units
         $units = Unit::all();
+
+        if ($units->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No units found!',
+            ], 404);
+        }
+
+        \Log::info('All units retrieved');
+        \Log::debug('Retrieved all units', $units->toArray());
 
         return response()->json([
             'status' => 'success',
@@ -143,6 +172,15 @@ class UnitController extends Controller
         // Get units by status
         $units = Unit::where('status', $request->status)->get();
 
+        if ($units->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No units found with this status!',
+            ], 404);
+        }
+        \Log::info('Units retrieved by status', ['status' => $request->status]);
+        \Log::debug('Retrieved units with status', $units->toArray());
+
         return response()->json([
             'status' => 'success',
             'message' => 'Units retrieved successfully!',
@@ -158,6 +196,15 @@ class UnitController extends Controller
         // Get units by tenant
         $units = Unit::where('tenant_id', $request->tenant_id)->get();
 
+        if ($units->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No units found for this tenant!',
+            ], 404);
+        }
+        \Log::info('Units retrieved by tenant ID', ['tenant_id' => $request->tenant_id]);
+        \Log::debug('Retrieved units for tenant', $units->toArray());
+
         return response()->json([
             'status' => 'success',
             'message' => 'Units retrieved successfully!',
@@ -172,6 +219,16 @@ class UnitController extends Controller
 
         // Get units by contract
         $units = Unit::where('contract_id', $request->contract_id)->get();
+
+        if ($units->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No units found for this contract!',
+            ], 404);
+        }
+
+        \Log::info('Units retrieved by contract', ['contract_id' => $request->contract_id]);
+        \Log::debug('Retrieved units for contract', $units->toArray());
 
         return response()->json([
             'status' => 'success',

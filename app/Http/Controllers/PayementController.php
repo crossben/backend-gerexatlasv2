@@ -127,58 +127,55 @@ class PayementController extends Controller
             'data' => $payments,
         ], 200);
     }
-    public function getPaymentsByContract(Request $request)
+    public function getPaymentsByUnitId(Request $request)
     {
         $request->validate([
-            'contract_id' => 'required|exists:contracts,id',
+            'unit_id' => 'required|exists:units,id',
         ]);
 
-        // Get all payments for a specific contract
-        $payments = Payement::where('contract_id', $request->contract_id)->get();
+        // Get all payments for a specific unit
+        $payments = Payement::where('unit_id', $request->unit_id)->get();
 
-        \Log::info('Payments retrieved for contract', ['contract_id' => $request->contract_id]);
+        \Log::info('Payments retrieved for unit', ['unit_id' => $request->unit_id]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Payments retrieved successfully!',
+            'message' => 'Payments retrieved successfully by unit ID!',
             'data' => $payments,
         ], 200);
     }
-    public function getPaymentsByTenant(Request $request)
+    public function getPaymentsByTenantId(Request $request)
     {
         $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
         ]);
 
         // Get all payments for a specific tenant
-        $payments = Payement::whereHas('contract', function ($query) use ($request) {
-            $query->where('tenant_id', $request->tenant_id);
-        })->get();
+        $payments = Payement::where('tenant_id', $request->tenant_id)->get();
 
         \Log::info('Payments retrieved for tenant', ['tenant_id' => $request->tenant_id]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Payments retrieved successfully!',
+            'message' => 'Payments retrieved successfully by tenant ID!',
             'data' => $payments,
         ], 200);
     }
-    public function getPaymentsByBuilding(Request $request)
+    
+    public function getPaymentsByBuildingId(Request $request)
     {
         $request->validate([
             'building_id' => 'required|exists:buildings,id',
         ]);
 
         // Get all payments for a specific building
-        $payments = Payement::whereHas('contract', function ($query) use ($request) {
-            $query->where('building_id', $request->building_id);
-        })->get();
+        $payments = Payement::where('building_id', $request->building_id)->get();
 
         \Log::info('Payments retrieved for building', ['building_id' => $request->building_id]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Payments retrieved successfully!',
+            'message' => 'Payments retrieved successfully by building ID!',
             'data' => $payments,
         ], 200);
     }
