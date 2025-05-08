@@ -93,7 +93,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'jane.smith@example.com',
             'phone' => '0987654321',
             'password' => bcrypt('password'),
-            'role' => 'manager', 
+            'role' => 'manager',
             'status' => 'active',
             'reference' => 'MANAGER456',
             'address' => '456 Elm St',
@@ -165,6 +165,7 @@ class DatabaseSeeder extends Seeder
         Contract::create([
             'tenant_id' => 1,
             'unit_id' => 1,
+            'manager_id' => 1,
             'contract_type' => 'Lease',
             'start_date' => now(),
             'end_date' => now()->addYear(),
@@ -175,6 +176,7 @@ class DatabaseSeeder extends Seeder
         Contract::create([
             'tenant_id' => 2,
             'unit_id' => 2,
+            'manager_id' => 1,
             'contract_type' => 'hehe boi',
             'start_date' => now(),
             'end_date' => now()->addYear(),

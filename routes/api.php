@@ -33,7 +33,6 @@ Route::get('/units', [UnitController::class, 'getAllUnits']); // tested
 Route::get('/units/{id}', [UnitController::class, 'getUnitById']); // tested
 Route::get('/units/building/{id}', [UnitController::class, 'getUnitsByBuildingId']); // tested
 
-
 // payment routes
 Route::post('/payments/create', [PayementController::class, 'createPayment']); // tested
 Route::put('/payments/update/{id}', [PayementController::class, 'updatePayment']); // tested
@@ -44,17 +43,14 @@ Route::get('/payments/tenant/{id}', [PayementController::class, 'getPaymentsByTe
 Route::get('/payments/building/{id}', [PayementController::class, 'getPaymentsByBuildingId']); // tested
 Route::get('/payments', [PayementController::class, 'getAllPayments']); // tested
 
-
-// contact routes
-Route::post('/contacts', [ContactController::class, 'Contact']); // tested
-
-// });
-
-// manager routes 
-Route::post('/managers/create', [ManagerController::class, 'RegisterManager']);
-Route::put('/managers/update/{id}', [ManagerController::class, 'updateManager']);
-Route::delete('/managers/delete/{id}', [ManagerController::class, 'deleteManager']);
-Route::get('/managers', [ManagerController::class, 'getManagers']); 
+// contract routes
+Route::post('/contracts/create', [ContractController::class, 'createContract']); // tested
+Route::put('/contracts/update/{id}', [ContractController::class, 'updateContract']); // tested but not fully
+Route::delete('/contracts/delete/{id}', [ContractController::class, 'deleteContract']); // tested
+Route::get('/contracts/manager/{id}', [ContractController::class, 'getContractsByManagerId']); // tested
+Route::get('/contracts/tenant/{id}', [ContractController::class, 'getContractsByTenantId']); // tested
+Route::get('/contracts/unit/{id}', [ContractController::class, 'getContractsByUnitId']); // tested
+Route::get('/contracts/{id}', [ContractController::class, 'getContractById']); // tested
 
 // tenant routes
 Route::post('/tenants/create', [TenantController::class, 'createTenant']); // tested
@@ -64,11 +60,15 @@ Route::get('/tenants/{id}', [TenantController::class, 'getTenantById']); // test
 Route::get('/tenants', [TenantController::class, 'getAllTenants']); // tested
 Route::get('/tenants/building/{id}', [TenantController::class, 'getTenantsByBuilding']); // tested
 
-// contract routes
-Route::post('/contracts/create', [ContractController::class, 'createContract']); // tested
-Route::put('/contracts/update/{id}', [ContractController::class, 'updateContract']);
-Route::delete('/contracts', [ContractController::class, 'deleteContract']);
-Route::get('/contracts', [ContractController::class, 'getContracts']);
-Route::get('/contacts/{id}', [ContactController::class, 'getContactById']);
-Route::put('/contacts/{id}', [ContactController::class, 'updateContact']);
-Route::delete('/contacts/{id}', [ContactController::class, 'deleteContact']);
+
+// manager routes 
+Route::post('/managers/create', [ManagerController::class, 'RegisterManager']);
+Route::put('/managers/update/{id}', [ManagerController::class, 'updateManager']);
+Route::delete('/managers/delete/{id}', [ManagerController::class, 'deleteManager']);
+Route::get('/managers', [ManagerController::class, 'getManagers']);
+// });
+
+
+
+// contact routes
+Route::post('/contacts', [ContactController::class, 'Contact']); // tested

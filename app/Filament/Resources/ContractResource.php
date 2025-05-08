@@ -28,7 +28,7 @@ class ContractResource extends Resource
         return $form
             ->schema([
                 // Tenant & Unit Selection Section
-                Forms\Components\Section::make('Tenant & Unit Details')
+                Forms\Components\Section::make('Tenant, Manager & Unit Details')
                     ->schema([
                         Forms\Components\Select::make('tenant_id')
                             ->relationship('tenant', 'name')
@@ -36,6 +36,13 @@ class ContractResource extends Resource
                             ->preload()
                             ->searchable(true)
                             ->label('Tenant'),
+
+                        Forms\Components\Select::make('manager_id')
+                            ->relationship('manager', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable(true)
+                            ->label('Manager'),
 
                         Forms\Components\Select::make('unit_id')
                             ->relationship('unit', 'name')
@@ -88,6 +95,7 @@ class ContractResource extends Resource
                                 'type4' => 'Type 4',
                             ])
                             ->searchable(),
+
                         Forms\Components\Textarea::make('reference')
                             ->label('Reference')
                             ->required()
@@ -123,6 +131,10 @@ class ContractResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->label('Unit Name'),
+                Tables\Columns\TextColumn::make('manager.name')
+                    ->sortable()
+                    ->searchable()
+                    ->label('Manager Name'),
                 Tables\Columns\TextColumn::make('start_date')
                     ->sortable()
                     ->date('Y-m-d')
