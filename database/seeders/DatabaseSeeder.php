@@ -6,9 +6,9 @@ use App\Models\Building;
 use App\Models\Contract;
 use App\Models\Invoice;
 use App\Models\Manager;
-use App\Models\Organization;
+// use App\Models\Organization;
 use App\Models\Payement;
-use App\Models\SubscriptionPlan;
+// use App\Models\SubscriptionPlan;
 use App\Models\Tenant;
 use App\Models\Unit;
 use App\Models\User;
@@ -192,7 +192,7 @@ class DatabaseSeeder extends Seeder
         //     'status' => 'pending',
         //     'invoice_body' => 'Invoice body for month 1',
         //     'amount' => 1000.00,
-        //     // 'due_date' => now()->addMonth(),
+        //     'due_date' => now()->addMonth(),
         //     'reference' => 'INVOICE123',
         // ]);
         // Invoice::create([
@@ -202,7 +202,7 @@ class DatabaseSeeder extends Seeder
         //     'status' => 'pending',
         //     'invoice_body' => 'Invoice body for month 2',
         //     'amount' => 1200.00,
-        //     // 'due_date' => now()->addMonth(),
+        //     'due_date' => now()->addMonth(),
         //     'reference' => 'INVOICE456',
         // ]);
 

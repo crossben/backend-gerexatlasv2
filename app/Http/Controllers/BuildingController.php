@@ -21,18 +21,18 @@ class BuildingController extends Controller
             'status' => 'nullable|string|in:active,inactive,suspended|max:50',
         ]);
 
-        // Create a new building
-        $building = new Building();
-        $building->manager_id = $request->manager_id;
-        $building->name = $request->name;
-        $building->type = $request->type;
-        $building->number_of_units = $request->number_of_units;
-        $building->city = $request->city;
-        $building->address = $request->address;
-        $building->description = $request->description;
-        $building->reference = $request->reference;
-        $building->status = $request->status ?? 'active'; // Default status to active if not provided
-        $building->save();
+        // Create a new building using the model
+        $building = Building::create([
+            'manager_id' => $request->manager_id,
+            'name' => $request->name,
+            'type' => $request->type,
+            'number_of_units' => $request->number_of_units,
+            'city' => $request->city,
+            'address' => $request->address,
+            'description' => $request->description,
+            'reference' => $request->reference ?? uniqid('imb_'),
+            'status' => $request->status ?? 'active',
+        ]);
 
         return response()->json([
             'status' => 'success',

@@ -26,9 +26,16 @@ class TenantController extends Controller
         $tenant->email = $request->email;
         $tenant->phone = $request->phone;
         $tenant->nationality = $request->nationality;
-        $tenant->reference = $request->reference;
-        $tenant->status = $request->status ?? 'active'; // Ensure default matches validation
+        $tenant->reference = $request->reference ?? uniqid('tnt_');
+        $tenant->status = $request->status ?? 'active';
         $tenant->save();
+
+        // Create a payment record for the tenant
+        $tenant->payments()->create([
+            'amount' => 0, // Default amount, adjust as needed
+            'reference' => uniqid('pay_'), // Unique reference for the payment
+            'status' => 'pending', // Default payment status
+        ]);
 
         \Log::info('Tenant created', ['tenant_id' => $tenant->id]);
 

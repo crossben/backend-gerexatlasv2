@@ -20,17 +20,17 @@ class ContractController extends Controller
             'status' => 'nullable|string|in:active,inactive,terminated|max:50',
         ]);
 
-        // Create a new contract
-        $contract = new Contract();
-        $contract->unit_id = $request->unit_id;
-        $contract->tenant_id = $request->tenant_id;
-        $contract->contract_type = $request->contract_type;
-        $contract->start_date = $request->start_date;
-        $contract->end_date = $request->end_date;
-        $contract->rent_amount = $request->rent_amount;
-        $contract->reference = $request->reference;
-        $contract->status = $request->status ?? 'active'; // Default status to active if not provided
-        $contract->save();
+        // Create a new contract using the model
+        $contract = Contract::create([
+            'unit_id' => $request->unit_id,
+            'tenant_id' => $request->tenant_id,
+            'contract_type' => $request->contract_type,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'rent_amount' => $request->rent_amount,
+            'reference' => $request->reference ?? uniqid('ctr_'),
+            'status' => $request->status ?? 'active',
+        ]);
 
         \Log::info('Contract created', ['contract_id' => $contract->id]);
 

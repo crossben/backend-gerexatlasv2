@@ -15,20 +15,20 @@ class PayementController extends Controller
             'receipt' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payement_method' => 'required|string|max:255',
-            'reference' => 'required|string|max:255',
+            'reference' => 'nullable|string|max:255',
             'status' => 'nullable|string|in:paid,pending,failed|max:50',
         ]);
 
-        // Create a new payment
-        $payment = new Payement();
-        $payment->unit_id = $request->unit_id;
-        $payment->tenant_id = $request->tenant_id;
-        $payment->receipt = $request->receipt;
-        $payment->amount = $request->amount;
-        $payment->payement_method = $request->payement_method;
-        $payment->reference = $request->reference;
-        $payment->status = $request->status ?? 'pending'; // Default to 'pending' if not provided
-        $payment->save();
+        // Create a new payment using the model
+        $payment = Payement::create([
+            'unit_id' => $request->unit_id,
+            'tenant_id' => $request->tenant_id,
+            'receipt' => $request->receipt,
+            'amount' => $request->amount,
+            'payement_method' => $request->payement_method,
+            'reference' => $request->reference ?? uniqid('pay_'),
+            'status' => $request->status ?? 'pending',
+        ]);
 
         return response()->json([
             'status' => 'success',
@@ -161,7 +161,7 @@ class PayementController extends Controller
             'data' => $payments,
         ], 200);
     }
-    
+
     public function getPaymentsByBuildingId(Request $request)
     {
         $request->validate([

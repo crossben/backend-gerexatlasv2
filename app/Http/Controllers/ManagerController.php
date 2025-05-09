@@ -4,44 +4,70 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Manager;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class ManagerController extends Controller
 {
-    public function RegisterManager(Request $request)
+
+    public function registerManager(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:managers,email',
-            'phone' => 'required|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:active,inactive,suspended|max:50',
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:managers,email',
+            'password' => 'required|string|min:8',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string',
         ]);
 
-        // Create a new manager
-        $manager = new Manager();
-        $manager->name = $request->name;
-        $manager->email = $request->email;
-        $manager->phone = $request->phone;
-        $manager->address = $request->address;
-        $manager->city = $request->city;
-        $manager->status = $request->status ?? 'active'; // Default status to active if not provided
-        $manager->save();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        \Log::info('Manager created', ['manager_id' => $manager->id]);
-
-        \Log::debug('Manager details', $manager->toArray());
-
-
-        \Log::notice('Manager creation process completed', ['manager_id' => $manager->id]);
-
+        $manager = Manager::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'reference' => uniqid('mgr_'), // Generate a unique reference
+            'address' => $request->address,
+            'city' => $request->city,
+            'country' => $request->country,
+        ]);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Manager created successfully!',
-            'data' => $manager,
+            'token' => $manager->createToken('manager-api-token')->plainTextToken,
+            'manager' => $manager,
         ], 201);
     }
+
+
+    // public function loginManager(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     $manager = Manager::where('email', $request->email)->first();
+
+    //     if (!$manager || !Hash::check($request->password, $manager->password)) {
+    //         throw ValidationException::withMessages([
+    //             'email' => ['The provided credentials are incorrect.'],
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'token' => $manager->createToken('manager-api-token')->plainTextToken,
+    //         'manager' => $manager,
+    //     ]);
+    // }
+
 
     public function loginManager(Request $request)
     {
@@ -51,15 +77,16 @@ class ManagerController extends Controller
         ]);
 
         // Authenticate the manager
-        if (auth()->attempt($request->only('email', 'password'))) {
-            $manager = auth()->user();
+        $manager = Manager::where('email', $request->email)->first();
 
+        if ($manager && Hash::check($request->password, $manager->password)) {
             \Log::info('Manager logged in', ['manager_id' => $manager->id]);
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Login successful!',
                 'data' => $manager,
+                'token' => $manager->createToken('manager-api-token')->plainTextToken,
             ], 200);
         }
 
@@ -68,6 +95,7 @@ class ManagerController extends Controller
             'message' => 'Invalid credentials.',
         ], 401);
     }
+
     public function logout(Request $request)
     {
         auth()->logout();

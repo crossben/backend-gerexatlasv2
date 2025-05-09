@@ -62,10 +62,21 @@ Route::get('/tenants/building/{id}', [TenantController::class, 'getTenantsByBuil
 
 
 // manager routes 
-Route::post('/managers/create', [ManagerController::class, 'RegisterManager']);
+Route::post('/managers/register', [ManagerController::class, 'RegisterManager']);
+Route::post('/managers/login', [ManagerController::class, 'LoginManager']);
 Route::put('/managers/update/{id}', [ManagerController::class, 'updateManager']);
 Route::delete('/managers/delete/{id}', [ManagerController::class, 'deleteManager']);
 Route::get('/managers', [ManagerController::class, 'getManagers']);
+
+Route::post('login', [ManagerController::class, 'loginManager']);
+Route::post('register', [ManagerController::class, 'RegisterManager']);
+
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('profile', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('logout', [ManagerController::class, 'logout']);
+});
 // });
 
 

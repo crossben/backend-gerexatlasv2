@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('password')->nullable();
             $table->string('role')->default('manager');
-            $table->string('status')->default('active');
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
             $table->string('reference')->unique();
             $table->string('address')->nullable();
             $table->string('city')->nullable();

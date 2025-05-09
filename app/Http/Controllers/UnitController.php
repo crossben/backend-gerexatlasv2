@@ -18,15 +18,15 @@ class UnitController extends Controller
             'reference' => 'nullable|string|max:255',
         ]);
 
-        // Create a new unit
-        $unit = new Unit();
-        $unit->building_id = $request->building_id;
-        $unit->name = $request->name;
-        $unit->surface = $request->surface;
-        $unit->type = $request->type;
-        $unit->status = $request->status ?? 'available'; // Default status to available if not provided
-        $unit->reference = $request->reference;
-        $unit->save();
+        // Use the model to create a new unit
+        $unit = Unit::create([
+            'building_id' => $request->building_id,
+            'name' => $request->name,
+            'surface' => $request->surface,
+            'type' => $request->type,
+            'status' => $request->status ?? 'available',
+            'reference' => $request->reference ?? uniqid('unit_'),
+        ]);
 
         return response()->json([
             'status' => 'success',

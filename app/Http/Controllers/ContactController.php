@@ -17,14 +17,14 @@ class ContactController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        // Store the contact message in the database
-        $contact = new Contact();
-        $contact->name = $request->name;
-        $contact->email = $request->email;
-        $contact->phone = $request->phone;
-        $contact->subject = $request->subject;
-        $contact->message = $request->message;
-        $contact->save();
+        // Use the Contact model to create the contact
+        $contact = Contact::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'subject' => $request->subject,
+            'message' => $request->message,
+        ]);
 
         return response()->json([
             'status' => 'success',
