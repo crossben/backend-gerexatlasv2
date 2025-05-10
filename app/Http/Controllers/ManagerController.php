@@ -108,29 +108,43 @@ class ManagerController extends Controller
         ], 200);
     }
 
-    public function updateManager(Request $request, $id)
+    public function updateManager(Request $request)
     {
         $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|max:255|unique:managers,email,' . $id,
+            'manager_id' => 'required|integer|exists:managers,id',
+            'first_name' => 'sometimes|required|string|max:255',
+            'last_name' => 'sometimes|required|string|max:255',
+            // 'email' => 'sometimes|required|email|max:255|unique:managers,email',
             'phone' => 'sometimes|required|string|max:20',
+            'password' => 'sometimes|required|string|min:8',
+            'role' => 'sometimes|nullable|string|in:admin,manager|max:50',
+            'reference' => 'sometimes|nullable|string|max:255',
             'address' => 'sometimes|nullable|string|max:255',
             'city' => 'sometimes|nullable|string|max:255',
+            'country' => 'sometimes|nullable|string|max:255',
             'status' => 'sometimes|nullable|string|in:active,inactive,suspended|max:50',
         ]);
-
-        // Find the manager
-        $manager = Manager::findOrFail($id);
-
-        // Update the manager details
-        if ($request->has('name')) {
-            $manager->name = $request->name;
+        $manager = Manager::findOrFail($request->manager_id);
+        if ($request->has('first_name')) {
+            $manager->first_name = $request->first_name;
+        }
+        if ($request->has('last_name')) {
+            $manager->last_name = $request->last_name;
         }
         if ($request->has('email')) {
             $manager->email = $request->email;
         }
         if ($request->has('phone')) {
             $manager->phone = $request->phone;
+        }
+        if ($request->has('password')) {
+            $manager->password = Hash::make($request->password);
+        }
+        if ($request->has('role')) {
+            $manager->role = $request->role;
+        }
+        if ($request->has('reference')) {
+            $manager->reference = $request->reference;
         }
         if ($request->has('address')) {
             $manager->address = $request->address;
@@ -140,6 +154,9 @@ class ManagerController extends Controller
         }
         if ($request->has('status')) {
             $manager->status = $request->status;
+        }
+        if ($request->has('country')) {
+            $manager->country = $request->country;
         }
 
         // Save the updated manager
@@ -155,8 +172,22 @@ class ManagerController extends Controller
             'data' => $manager,
         ], 200);
     }
-    public function deleteManager($id)
+
+    public function deleteManager(Request $request, $id)
     {
+        // Validate the ID
+        $request->validate([
+            'id' => 'required|integer|exists:managers,id',
+        ]);
+
+        // Check if the manager is logged in
+        if (auth()->user()->id != $id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to delete this manager.',
+            ], 403);
+        }
+
         // Find the manager
         $manager = Manager::findOrFail($id);
 
@@ -170,10 +201,11 @@ class ManagerController extends Controller
             'message' => 'Manager deleted successfully!',
         ], 200);
     }
-    public function getManager($id)
+
+    public function getManagerById(Request $request)
     {
         // Find the manager
-        $manager = Manager::findOrFail($id);
+        $manager = Manager::findOrFail($request->manager_id);
 
         \Log::info('Manager retrieved', ['manager_id' => $manager->id]);
 
@@ -182,6 +214,7 @@ class ManagerController extends Controller
             'data' => $manager,
         ], 200);
     }
+
     public function getAllManagers()
     {
         // Get all managers

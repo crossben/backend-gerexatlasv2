@@ -102,7 +102,7 @@ class UnitController extends Controller
         // Get the unit with its associated building
         $unit = Unit::with('building')->find($request->unit_id);
 
-        if (!$unit) {
+        if ($unit->isEmpty()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unit not found!',
