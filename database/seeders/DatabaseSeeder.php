@@ -4,11 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Building;
 use App\Models\Contract;
-use App\Models\Invoice;
 use App\Models\Manager;
-// use App\Models\Organization;
 use App\Models\Payement;
-// use App\Models\SubscriptionPlan;
 use App\Models\Tenant;
 use App\Models\Unit;
 use App\Models\User;
@@ -77,9 +74,9 @@ class DatabaseSeeder extends Seeder
         Manager::create([
             'first_name' => 'John',
             'last_name' => 'Doe',
-            'email' => 'john.doe@example.com',
+            'email' => 'admin@gmail.com',
             'phone' => '1234567890',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('12334567'),
             'role' => 'manager',
             'status' => 'active',
             'reference' => 'MANAGER123',
@@ -92,7 +89,7 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'Smith',
             'email' => 'jane.smith@example.com',
             'phone' => '0987654321',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('12334567'),
             'role' => 'manager',
             'status' => 'active',
             'reference' => 'MANAGER456',
@@ -124,9 +121,32 @@ class DatabaseSeeder extends Seeder
             'reference' => 'BUILD456',
             'status' => 'active',
         ]);
+        Building::create([
+            'manager_id' => 1,
+            'name' => 'Building 3',
+            'city' => 'Chicago',
+            'type' => 'Condo',
+            'number_of_units' => 8,
+            'address' => '789 Oak St',
+            'description' => 'A description of Building 3',
+            'reference' => 'BUILD789',
+            'status' => 'active',
+        ]);
+        Building::create([
+            'manager_id' => 2,
+            'name' => 'Building 4',
+            'city' => 'Houston',
+            'type' => 'Townhouse',
+            'number_of_units' => 12,
+            'address' => '101 Pine St',
+            'description' => 'A description of Building 4',
+            'reference' => 'BUILD101',
+            'status' => 'active',
+        ]);
 
         Unit::create([
             'building_id' => 1,
+            'manager_id' => 1,
             'name' => 'Unit 1',
             'surface' => '100m2',
             'type' => 'Flat',
@@ -136,29 +156,107 @@ class DatabaseSeeder extends Seeder
 
         Unit::create([
             'building_id' => 2,
+            'manager_id' => 1,
             'name' => 'Unit 2',
             'surface' => '200m2',
             'type' => 'Apartment',
             'reference' => 'UNIT456',
             'status' => 'available',
         ]);
+        Unit::create([
+            'building_id' => 3,
+            'manager_id' => 1,
+            'name' => 'Unit 3',
+            'surface' => '150m2',
+            'type' => 'Condo',
+            'reference' => 'UNIT789',
+            'status' => 'available',
+        ]);
+        Unit::create([
+            'building_id' => 4,
+            'manager_id' => 2,
+            'name' => 'Unit 4',
+            'surface' => '120m2',
+            'type' => 'Townhouse',
+            'reference' => 'UNIT101',
+            'status' => 'available',
+        ]);
+        Unit::create([
+            'building_id' => 1,
+            'manager_id' => 2,
+            'name' => 'Unit 5',
+            'surface' => '80m2',
+            'type' => 'Flat',
+            'reference' => 'UNIT102',
+            'status' => 'available',
+        ]);
+        Unit::create([
+            'building_id' => 2,
+            'manager_id' => 2,
+            'name' => 'Unit 6',
+            'surface' => '90m2',
+            'type' => 'Apartment',
+            'reference' => 'UNIT103',
+            'status' => 'available',
+        ]);
+        Unit::create([
+            'building_id' => 3,
+            'manager_id' => 2,
+            'name' => 'Unit 7',
+            'surface' => '110m2',
+            'type' => 'Condo',
+            'reference' => 'UNIT104',
+            'status' => 'available',
+        ]);
+        Unit::create([
+            'building_id' => 4,
+            'manager_id' => 2,
+            'name' => 'Unit 8',
+            'surface' => '130m2',
+            'type' => 'Townhouse',
+            'reference' => 'UNIT105',
+            'status' => 'available',
+        ]);
 
         Tenant::create([
             'unit_id' => 1,
-            'building_id' => 1,
+            'manager_id' => 1,
             'name' => 'Tenant 1',
             'email' => 'tenant1@example.com',
+            'phone' => '123-456-7890',
+            'nationality' => 'Puerto Rican',
             'reference' => 'TENANT123',
-            'status' => 'active',
+            'status' => 'inactive',
         ]);
 
         Tenant::create([
             'unit_id' => 2,
-            'building_id' => 2,
+            'manager_id' => 1,
             'name' => 'Tenant 2',
             'email' => 'tenant2@example.com',
             'phone' => '123-456-7890',
+            'nationality' => 'Nigerian',
             'reference' => 'TENANT456',
+            'status' => 'active',
+        ]);
+        Tenant::create([
+            'unit_id' => 3,
+            'manager_id' => 1,
+            'name' => 'Tenant 3',
+            'email' => 'tenant3@example.com',
+            'phone' => '123-456-7890',
+            'nationality' => 'American',
+            'reference' => 'TENANT789',
+            'status' => 'active',
+        ]);
+        Tenant::create([
+            'unit_id' => 4,
+            'manager_id' => 2,
+            'name' => 'Tenant 4',
+            'email' => 'tenant4@example.com',
+            'phone' => '123-456-7890',
+            'nationality' => 'Indian',
+            'reference' => 'TENANT101',
             'status' => 'active',
         ]);
 
@@ -182,6 +280,28 @@ class DatabaseSeeder extends Seeder
             'end_date' => now()->addYear(),
             'rent_amount' => 1200,
             'reference' => 'CONTRACT123',
+            'status' => 'active',
+        ]);
+        Contract::create([
+            'tenant_id' => 3,
+            'unit_id' => 3,
+            'manager_id' => 1,
+            'contract_type' => 'Lease',
+            'start_date' => now(),
+            'end_date' => now()->addYear(),
+            'rent_amount' => 1500,
+            'reference' => 'CONTRACT456',
+            'status' => 'active',
+        ]);
+        Contract::create([
+            'tenant_id' => 4,
+            'unit_id' => 4,
+            'manager_id' => 1,
+            'contract_type' => 'Lease',
+            'start_date' => now(),
+            'end_date' => now()->addYear(),
+            'rent_amount' => 1800,
+            'reference' => 'CONTRACT789',
             'status' => 'active',
         ]);
 
@@ -224,7 +344,38 @@ class DatabaseSeeder extends Seeder
             'building_id' => 2,
             'receipt' => 'ehbfebfe',
             'payement_method' => 'orange money',
+            'reference' => 'PAYMENT451',
+            'status' => 'completed',
+        ]);
+
+        Payement::create([
+            'amount' => 1200,
+            'unit_id' => 2,
+            'tenant_id' => 2,
+            'building_id' => 2,
+            'receipt' => 'ehbfebfe',
+            'payement_method' => 'orange money',
             'reference' => 'PAYMENT456',
+            'status' => 'completed',
+        ]);
+        Payement::create([
+            'amount' => 1200,
+            'unit_id' => 2,
+            'tenant_id' => 2,
+            'building_id' => 2,
+            'receipt' => 'ehbfebfe',
+            'payement_method' => 'orange money',
+            'reference' => 'PAYMENT458',
+            'status' => 'completed',
+        ]);
+        Payement::create([
+            'amount' => 1200,
+            'unit_id' => 2,
+            'tenant_id' => 2,
+            'building_id' => 2,
+            'receipt' => 'ehbfebfe',
+            'payement_method' => 'orange money',
+            'reference' => 'PAYMENT457',
             'status' => 'completed',
         ]);
     }

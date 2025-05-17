@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/units', [UnitController::class, 'getAllUnits']); // tested
     Route::get('/units/{id}', [UnitController::class, 'getUnitById']); // tested
     Route::get('/units/building/{id}', [UnitController::class, 'getUnitsByBuildingId']); // tested
+    Route::get('/units/manager/{id}', [UnitController::class, 'getUnitsByManagerId']); // tested
 
     // payment routes
     Route::post('/payments/create', [PayementController::class, 'createPayment']); // tested
@@ -71,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::delete('/tenants/delete/{id}', [TenantController::class, 'deleteTenant']); // tested
     Route::get('/tenants/{id}', [TenantController::class, 'getTenantById']); // tested 
     Route::get('/tenants', [TenantController::class, 'getAllTenants']); // tested
-    Route::get('/tenants/building/{id}', [TenantController::class, 'getTenantsByBuilding']); // tested
+    Route::get('/tenants/manager/{id}', [TenantController::class, 'getTenantsByManagerId']); // tested
 
     // contact routes
     Route::post('/contacts', [ContactController::class, 'Contact']); // tested

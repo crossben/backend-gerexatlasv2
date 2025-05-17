@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->foreignId('building_id')->nullable()->constrained()->onDelete('set null');            // $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('manager_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
             $table->string('surface')->nullable();
             $table->string('type')->nullable();

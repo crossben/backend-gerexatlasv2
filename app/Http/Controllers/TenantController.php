@@ -53,6 +53,7 @@ class TenantController extends Controller
     public function updateTenant(Request $request)
     {
         $request->validate([
+            'tenant_id' => 'required|exists:tenants,id',
             'unit_id' => 'required|exists:units,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:tenants,email',
@@ -148,7 +149,7 @@ class TenantController extends Controller
     public function getAllTenants(Request $request)
     {
         // Get all tenants
-        $tenants = Tenant::all();
+        $tenants = Tenant::with(['unit', 'building'])->get();
 
         if ($tenants->isEmpty()) {
             return response()->json([
@@ -164,23 +165,23 @@ class TenantController extends Controller
             'data' => $tenants,
         ], 200);
     }
-    public function getTenantsByBuilding(Request $request)
+    public function getTenantsByManagerId(Request $request)
     {
         $request->validate([
-            'building_id' => 'required|exists:buildings,id',
+            'manager_id' => 'required|exists:managers,id',
         ]);
 
-        // Get tenants by building
-        $tenants = Tenant::where('building_id', $request->building_id)->get();
+        // Get tenants by manager
+        $tenants = Tenant::with('unit')->where('manager_id', $request->manager_id)->get();
 
         if ($tenants->isEmpty()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'No tenants found for this building!',
+                'message' => 'No tenants found for this manager!',
             ], 404);
         }
 
-        \Log::info('Tenants retrieved by building', ['building_id' => $request->building_id]);
+        \Log::info('Tenants retrieved by manager', ['manager_id' => $request->manager_id]);
 
         return response()->json([
             'status' => 'success',
@@ -212,7 +213,7 @@ class TenantController extends Controller
             'data' => $tenants,
         ], 200);
     }
-    public function getTenantsByManagerId(Request $request)
+    public function getTenantsByManagerId2(Request $request)
     {
         $request->validate([
             'manager_id' => 'required|exists:managers,id',

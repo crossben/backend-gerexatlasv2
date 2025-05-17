@@ -142,6 +142,30 @@ class UnitController extends Controller
         ], 200);
     }
 
+    public function getUnitsByManagerId(Request $request)
+    {
+        $request->validate([
+            'manager_id' => 'required|exists:managers,id',
+        ]);
+
+        // Get units by manager
+        $units = Unit::where('manager_id', $request->manager_id)->get();
+
+        if ($units->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No units found for this manager!',
+            ], 404);
+        }
+        \Log::info('Units retrieved by manager ID', ['manager_id' => $request->manager_id]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Units retrieved successfully!',
+            'data' => $units,
+        ], 200);
+    }
+
     public function getAllUnits(Request $request)
     {
         // Get all units

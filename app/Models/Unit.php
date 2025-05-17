@@ -26,6 +26,7 @@ class Unit extends Model
 
     protected $fillable = [
         'building_id',
+        'manager_id',
         'name',
         'surface',
         'type',
@@ -49,6 +50,10 @@ class Unit extends Model
     public function payements()
     {
         return $this->hasMany(Payement::class);
+    }
+    public function manager()
+    {
+        return $this->belongsTo(Manager::class);
     }
 }
 
