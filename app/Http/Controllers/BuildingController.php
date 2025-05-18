@@ -110,8 +110,8 @@ class BuildingController extends Controller
             'building_id' => 'required|exists:buildings,id',
         ]);
 
-        // Get the building
-        $building = Building::find($request->building_id);
+        // Get the building with associated units
+        $building = Building::with('units')->find($request->building_id);
 
         return response()->json([
             'status' => 'success',

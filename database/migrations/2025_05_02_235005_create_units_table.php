@@ -15,8 +15,14 @@ return new class extends Migration {
             $table->foreignId('building_id')->nullable()->constrained()->onDelete('set null');            // $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('manager_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
-            $table->string('surface')->nullable();
-            $table->string('type')->nullable();
+            $table->string('type')->default('unit');
+            $table->string('tenant_name');
+            $table->string('tenant_email');
+            $table->string('tenant_phone');
+            $table->string('start_date')->nullable();
+            $table->string('end_date')->nullable();
+            $table->string('rent_amount')->nullable();
+            $table->string('contract_type')->nullable();
             $table->string('reference')->unique();
             $table->string('status')->default('available');
             $table->timestamps();

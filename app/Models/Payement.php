@@ -13,10 +13,10 @@ class Payement extends Model
     // {
     //     return $this->belongsTo(Invoice::class);
     // }
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
+    // public function tenant()
+    // {
+    //     return $this->belongsTo(Tenant::class);
+    // }
     public function unit()
     {
         return $this->belongsTo(Unit::class);
@@ -29,9 +29,9 @@ class Payement extends Model
 
     protected $fillable = [
         'unit_id',
-        'tenant_id',
+        'manager_id',
         'building_id',
-        'receipt',
+        // 'receipt',
         'amount',
         'payement_method',
         'reference',

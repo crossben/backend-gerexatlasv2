@@ -11,8 +11,8 @@ class PayementController extends Controller
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
-            'tenant_id' => 'required|exists:tenants,id',
-            'receipt' => 'required|string|max:255',
+            'manager_id' => 'required|exists:managers,id',
+            // 'receipt' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payement_method' => 'required|string|max:255',
             'reference' => 'nullable|string|max:255',
@@ -22,8 +22,8 @@ class PayementController extends Controller
         // Create a new payment using the model
         $payment = Payement::create([
             'unit_id' => $request->unit_id,
-            'tenant_id' => $request->tenant_id,
-            'receipt' => $request->receipt,
+            'manager_id' => $request->manager_id,
+            // 'receipt' => $request->receipt,
             'amount' => $request->amount,
             'payement_method' => $request->payement_method,
             'reference' => $request->reference ?? uniqid('pay_'),
@@ -42,8 +42,8 @@ class PayementController extends Controller
         $request->validate([
             'payement_id' => 'required|exists:payements,id',
             'unit_id' => 'required|exists:units,id',
-            'tenant_id' => 'required|exists:tenants,id',
-            'receipt' => 'required|string|max:255',
+            'manager_id' => 'required|exists:managers,id',
+            // 'receipt' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payement_method' => 'required|string|max:255',
             'reference' => 'nullable|string|max:255',
@@ -55,12 +55,12 @@ class PayementController extends Controller
         if ($request->has('unit_id')) {
             $payment->unit_id = $request->unit_id;
         }
-        if ($request->has('tenant_id')) {
-            $payment->tenant_id = $request->tenant_id;
+        if ($request->has('manager_id')) {
+            $payment->manager_id = $request->manager_id;
         }
-        if ($request->has('receipt')) {
-            $payment->receipt = $request->receipt;
-        }
+        // if ($request->has('receipt')) {
+        //     $payment->receipt = $request->receipt;
+        // }
         if ($request->has('amount')) {
             $payment->amount = $request->amount;
         }
@@ -127,6 +127,26 @@ class PayementController extends Controller
             'data' => $payments,
         ], 200);
     }
+
+    public function getPaymentsByManagerId(Request $request)
+    {
+        $request->validate([
+            'manager_id' => 'required|exists:managers,id',
+        ]);
+
+        // Get all payments for a specific manager
+        $payments = Payement::with(['unit', 'building'])
+            ->where('manager_id', $request->manager_id)
+            ->get();
+
+        \Log::info('Payments retrieved for manager', ['manager_id' => $request->manager_id]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payments retrieved successfully by manager ID!',
+            'data' => $payments,
+        ], 200);
+    }
     public function getPaymentsByUnitId(Request $request)
     {
         $request->validate([
@@ -147,13 +167,13 @@ class PayementController extends Controller
     public function getPaymentsByTenantId(Request $request)
     {
         $request->validate([
-            'tenant_id' => 'required|exists:tenants,id',
+            'manager_id' => 'required|exists:tenants,id',
         ]);
 
         // Get all payments for a specific tenant
-        $payments = Payement::where('tenant_id', $request->tenant_id)->get();
+        $payments = Payement::where('manager_id', $request->manager_id)->get();
 
-        \Log::info('Payments retrieved for tenant', ['tenant_id' => $request->tenant_id]);
+        \Log::info('Payments retrieved for tenant', ['manager_id' => $request->manager_id]);
 
         return response()->json([
             'status' => 'success',

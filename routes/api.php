@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/payments/tenant/{id}', [PayementController::class, 'getPaymentsByTenantId']); // tested
     Route::get('/payments/building/{id}', [PayementController::class, 'getPaymentsByBuildingId']); // tested
     Route::get('/payments', [PayementController::class, 'getAllPayments']); // tested
+    Route::get('/payments/manager/{id}', [PayementController::class, 'getPaymentsByManagerId']); // tested
 
     // contract routes
     Route::post('/contracts/create', [ContractController::class, 'createContract']); // tested
