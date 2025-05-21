@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
             $table->foreignId('manager_id')->constrained()->onDelete('cascade');
-            $table->foreignId('building_id')->constrained()->onDelete('cascade');
             // $table->string('receipt');
             $table->decimal('amount', 10, 2);
             $table->string('payement_method')->nullable();

@@ -136,7 +136,7 @@ class UnitController extends Controller
         ]);
 
         // Get the unit with its associated building
-        $unit = Unit::with('building')->find($request->unit_id);
+        $unit = Unit::with(['building', 'payements'])->find($request->unit_id);
 
         if (!$unit) {
             return response()->json([

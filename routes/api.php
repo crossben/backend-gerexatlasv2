@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/buildings', [BuildingController::class, 'getAllBuildings']); // tested
     Route::get('/buildings/{id}', [BuildingController::class, 'getBuildingById']); // tested
     Route::get('/buildings/manager/{id}', [BuildingController::class, 'getBuildingsByManagerId']); // tested
+    Route::get('/buildings/reference/{reference}', [BuildingController::class, 'getBuildingsByReference']); // tested
 
     // unit routes
     Route::post('/units/create', [UnitController::class, 'createUnit']); // tested

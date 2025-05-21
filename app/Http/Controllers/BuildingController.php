@@ -120,6 +120,22 @@ class BuildingController extends Controller
         ], 200);
     }
 
+    public function getBuildingsByReference(Request $request)
+    {
+        $request->validate([
+            'reference' => 'required|string|max:255',
+        ]);
+
+        // Get buildings by reference
+        $buildings = Building::with('units')->where('reference', $request->reference)->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Buildings retrieved successfully!',
+            'data' => $buildings,
+        ], 200);
+    }
+
     public function getAllBuildings(Request $request)
     {
         // Get all buildings
