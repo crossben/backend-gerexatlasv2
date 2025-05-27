@@ -24,6 +24,7 @@ class Manager extends Authenticatable
         'address',
         'city',
         'country',
+        'buildings_count',
     ];
     protected $hidden = [
         'password',

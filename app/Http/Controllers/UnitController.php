@@ -21,7 +21,7 @@ class UnitController extends Controller
             'rent_amount' => 'nullable|numeric|min:0',
             'contract_type' => 'nullable|string|max:255',
             'reference' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:available,rented,under_maintenance|max:50',
+            'status' => 'nullable|string|in:disponible,louer,sous_maintenance,indisponible|max:50',
         ]);
 
         // Use the model to create a new unit
@@ -62,7 +62,7 @@ class UnitController extends Controller
             'rent_amount' => 'nullable|numeric|min:0',
             'contract_type' => 'nullable|string|max:255',
             'reference' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:available,rented,under_maintenance|max:50',
+            'status' => 'nullable|string|in:disponible,louer,sous_maintenance,indisponible|max:50',
         ]);
 
         // Update the unit

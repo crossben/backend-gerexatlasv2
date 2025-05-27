@@ -13,7 +13,7 @@ class BuildingController extends Controller
             'manager_id' => 'required|exists:managers,id',
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'number_of_units' => 'required|integer|min:1',
+            // 'number_of_units' => 'required|integer|min:1',
             'city' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
@@ -153,13 +153,15 @@ class BuildingController extends Controller
             'manager_id' => 'required|exists:managers,id',
         ]);
 
-        // Get buildings by manager
-        $buildings = Building::where('manager_id', $request->manager_id)->get();
+        // Get buildings by manager with associated units
+        $buildings = Building::with('units')->where('manager_id', $request->manager_id)->get();
+        $count = $buildings->count();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Buildings retrieved successfully!',
             'data' => $buildings,
+            'count' => $count,
         ], 200);
     }
 }

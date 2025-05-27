@@ -83,11 +83,12 @@ class DatabaseSeeder extends Seeder
             'address' => '123 Main St',
             'city' => 'New York',
             'country' => 'USA',
+            'buildings_count' => 5,
         ]);
         Manager::create([
             'first_name' => 'Jane',
             'last_name' => 'Smith',
-            'email' => 'jane.smith@example.com',
+            'email' => 'admin2@gmail.com',
             'phone' => '0987654321',
             'password' => \Illuminate\Support\Facades\Hash::make('12334567'),
             'role' => 'manager',
@@ -96,6 +97,7 @@ class DatabaseSeeder extends Seeder
             'address' => '456 Elm St',
             'city' => 'Los Angeles',
             'country' => 'USA',
+            'buildings_count' => 10,
         ]);
 
         Building::create([
@@ -103,7 +105,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Building 1',
             'city' => 'New York',
             'type' => 'Flat',
-            'number_of_units' => 5,
+            // 'number_of_units' => 5,
             'address' => '123 Main St',
             'description' => 'A description of Building 1',
             'reference' => 'BUILD123',
@@ -115,7 +117,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Building 2',
             'city' => 'Los Angeles',
             'type' => 'Apartment',
-            'number_of_units' => 10,
+            // 'number_of_units' => 10,
             'address' => '456 Elm St',
             'description' => 'A description of Building 2',
             'reference' => 'BUILD456',
@@ -126,7 +128,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Building 3',
             'city' => 'Chicago',
             'type' => 'Condo',
-            'number_of_units' => 8,
+            // 'number_of_units' => 8,
             'address' => '789 Oak St',
             'description' => 'A description of Building 3',
             'reference' => 'BUILD789',
@@ -137,7 +139,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Building 4',
             'city' => 'Houston',
             'type' => 'Townhouse',
-            'number_of_units' => 12,
+            // 'number_of_units' => 12,
             'address' => '101 Pine St',
             'description' => 'A description of Building 4',
             'reference' => 'BUILD101',
@@ -157,7 +159,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1200.00,
             'contract_type' => 'Yearly',
             'reference' => 'UNIT123',
-            'status' => 'available',
+            'status' => 'disponible',
         ]);
 
         Unit::create([
@@ -173,7 +175,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1500.00,
             'contract_type' => 'Yearly',
             'reference' => 'UNIT456',
-            'status' => 'rented',
+            'status' => 'louer',
         ]);
 
         Unit::create([
@@ -189,7 +191,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1800.00,
             'contract_type' => 'Yearly',
             'reference' => 'UNIT789',
-            'status' => 'under_maintenance',
+            'status' => 'sous_maintenance',
         ]);
 
         Unit::create([
@@ -205,7 +207,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1300.00,
             'contract_type' => 'Monthly',
             'reference' => 'UNIT101',
-            'status' => 'available',
+            'status' => 'disponible',
         ]);
 
         Unit::create([
@@ -221,7 +223,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 950.00,
             'contract_type' => 'Monthly',
             'reference' => 'UNIT102',
-            'status' => 'rented',
+            'status' => 'Indisponible',
         ]);
 
         Unit::create([
@@ -237,7 +239,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1400.00,
             'contract_type' => 'Yearly',
             'reference' => 'UNIT103',
-            'status' => 'available',
+            'status' => 'indisponible',
         ]);
 
         Unit::create([
@@ -253,7 +255,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1600.00,
             'contract_type' => 'Monthly',
             'reference' => 'UNIT104',
-            'status' => 'under_maintenance',
+            'status' => 'sous_maintenance',
         ]);
 
         Unit::create([
@@ -269,7 +271,7 @@ class DatabaseSeeder extends Seeder
             'rent_amount' => 1700.00,
             'contract_type' => 'Yearly',
             'reference' => 'UNIT105',
-            'status' => 'rented',
+            'status' => 'louer',
         ]);
 
         Tenant::create([
@@ -384,7 +386,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1000,
             'unit_id' => 1,
             'manager_id' => 1,
-            'building_id' => 1,
+            // 'building_id' => 1,
             // 'receipt' => 'hehe boi',
             'payement_method' => 'credit_card',
             'reference' => 'PAYMENT123',
@@ -395,7 +397,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 1,
-            'building_id' => 2,
+            // 'building_id' => 2,
             // 'receipt' => 'ehbfebfe',
             'payement_method' => 'bank_transfer',
             'reference' => 'PAYMENT451',
@@ -406,7 +408,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 1,
-            'building_id' => 2,
+            // 'building_id' => 2,
             // 'receipt' => 'ehbfebfe',
             'payement_method' => 'cash',
             'reference' => 'PAYMENT456',
@@ -416,7 +418,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 2,
-            'building_id' => 2,
+            // 'building_id' => 2,
             // 'receipt' => 'ehbfebfe',
             'payement_method' => 'credit_card',
             'reference' => 'PAYMENT458',
@@ -426,7 +428,7 @@ class DatabaseSeeder extends Seeder
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 2,
-            'building_id' => 2,
+            // 'building_id' => 2,
             // 'receipt' => 'ehbfebfe',
             'payement_method' => 'bank_transfer',
             'reference' => 'PAYMENT457',

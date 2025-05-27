@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('rent_amount')->nullable();
             $table->string('contract_type')->nullable();
             $table->string('reference')->unique();
-            $table->string('status')->default('available');
+            $table->string('status')->default('disponible');
             $table->timestamps();
         });
     }

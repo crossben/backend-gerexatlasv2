@@ -199,4 +199,24 @@ class PayementController extends Controller
             'data' => $payments,
         ], 200);
     }
+
+    public function getAllPaymentForCurrentMonthByManagerId(Request $request)
+    {
+        $request->validate([
+            'manager_id' => 'required|exists:managers,id',
+        ]);
+
+        // Get all payments for the current month by manager ID
+        $payments = Payement::where('manager_id', $request->manager_id)
+            ->whereMonth('created_at', now()->month)
+            ->get();
+
+        \Log::info('Payments for current month retrieved for manager', ['manager_id' => $request->manager_id]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payments for current month retrieved successfully by manager ID!',
+            'data' => $payments,
+        ], 200);
+    }
 }

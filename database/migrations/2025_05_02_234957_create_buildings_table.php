@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('manager_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('type')->default('residential');
-            $table->string('number_of_units')->default('0');
+            // $table->string('number_of_units')->default('0');
             $table->string('city')->nullable();
             $table->string('address')->nullable();
             $table->text('description')->nullable();
