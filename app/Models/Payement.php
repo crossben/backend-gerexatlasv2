@@ -30,8 +30,6 @@ class Payement extends Model
     protected $fillable = [
         'unit_id',
         'manager_id',
-        'building_id',
-        // 'receipt',
         'amount',
         'payement_method',
         'reference',

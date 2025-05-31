@@ -135,8 +135,13 @@ class UnitController extends Controller
             'unit_id' => 'required|exists:units,id',
         ]);
 
-        // Get the unit with its associated building
-        $unit = Unit::with(['building', 'payements'])->find($request->unit_id);
+        // Get the unit with its associated building and payments ordered by newest first
+        $unit = Unit::with([
+            'building',
+            'payements' => function ($query) {
+                $query->orderBy('created_at', 'desc'); // Order payments newest to oldest
+            }
+        ])->find($request->unit_id);
 
         if (!$unit) {
             return response()->json([

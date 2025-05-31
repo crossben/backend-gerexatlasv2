@@ -386,53 +386,43 @@ class DatabaseSeeder extends Seeder
             'amount' => 1000,
             'unit_id' => 1,
             'manager_id' => 1,
-            // 'building_id' => 1,
-            // 'receipt' => 'hehe boi',
             'payement_method' => 'credit_card',
             'reference' => 'PAYMENT123',
-            'status' => 'completed',
+            'status' => 'payer',
         ]);
 
         Payement::create([
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 1,
-            // 'building_id' => 2,
-            // 'receipt' => 'ehbfebfe',
             'payement_method' => 'bank_transfer',
             'reference' => 'PAYMENT451',
-            'status' => 'failed',
+            'status' => 'echoue',
         ]);
 
         Payement::create([
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 1,
-            // 'building_id' => 2,
-            // 'receipt' => 'ehbfebfe',
             'payement_method' => 'cash',
             'reference' => 'PAYMENT456',
-            'status' => 'pending',
+            'status' => 'en_attente',
         ]);
         Payement::create([
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 2,
-            // 'building_id' => 2,
-            // 'receipt' => 'ehbfebfe',
             'payement_method' => 'credit_card',
             'reference' => 'PAYMENT458',
-            'status' => 'completed',
+            'status' => 'payer',
         ]);
         Payement::create([
             'amount' => 1200,
             'unit_id' => 2,
             'manager_id' => 2,
-            // 'building_id' => 2,
-            // 'receipt' => 'ehbfebfe',
             'payement_method' => 'bank_transfer',
             'reference' => 'PAYMENT457',
-            'status' => 'completed',
+            'status' => 'payer',
         ]);
     }
 }

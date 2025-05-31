@@ -14,11 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
             $table->foreignId('manager_id')->constrained()->onDelete('cascade');
-            // $table->string('receipt');
             $table->decimal('amount', 10, 2);
             $table->string('payement_method')->nullable();
             $table->string('reference')->unique();
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('status', ['en_attente', 'payer', 'echoue'])->default('en_attente');
             $table->timestamps();
         });
     }

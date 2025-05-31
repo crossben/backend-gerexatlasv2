@@ -12,22 +12,20 @@ class PayementController extends Controller
         $request->validate([
             'unit_id' => 'required|exists:units,id',
             'manager_id' => 'required|exists:managers,id',
-            // 'receipt' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payement_method' => 'required|string|max:255',
             'reference' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:paid,pending,failed|max:50',
+            'status' => 'nullable|string|in:payer,en_attente,echoue|max:50',
         ]);
 
         // Create a new payment using the model
         $payment = Payement::create([
             'unit_id' => $request->unit_id,
             'manager_id' => $request->manager_id,
-            // 'receipt' => $request->receipt,
             'amount' => $request->amount,
             'payement_method' => $request->payement_method,
             'reference' => $request->reference ?? uniqid('pay_'),
-            'status' => $request->status ?? 'pending',
+            'status' => $request->status ?? 'en_attente',
         ]);
 
         return response()->json([
@@ -103,8 +101,8 @@ class PayementController extends Controller
             'payement_id' => 'required|exists:payements,id',
         ]);
 
-        // Get the payment details
-        $payment = Payement::find($request->payement_id);
+        // Get the payment details with associated unit
+        $payment = Payement::with('unit')->find($request->payement_id);
 
         \Log::info('Payment retrieved', ['payement_id' => $payment->id]);
 
@@ -135,7 +133,7 @@ class PayementController extends Controller
         ]);
 
         // Get all payments for a specific manager
-        $payments = Payement::with(['unit', 'building'])
+        $payments = Payement::with(['unit'])
             ->where('manager_id', $request->manager_id)
             ->get();
 
