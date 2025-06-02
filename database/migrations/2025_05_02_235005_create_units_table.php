@@ -16,9 +16,9 @@ return new class extends Migration {
             $table->foreignId('manager_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
             $table->string('type')->default('unit');
-            $table->string('tenant_name');
-            $table->string('tenant_email');
-            $table->string('tenant_phone');
+            $table->string('tenant_name')->nullable();
+            $table->string('tenant_email')->nullable();
+            $table->string('tenant_phone')->nullable();
             $table->string('start_date')->nullable();
             $table->string('end_date')->nullable();
             $table->string('rent_amount')->nullable();

@@ -41,11 +41,10 @@ class PayementController extends Controller
             'payement_id' => 'required|exists:payements,id',
             'unit_id' => 'required|exists:units,id',
             'manager_id' => 'required|exists:managers,id',
-            // 'receipt' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payement_method' => 'required|string|max:255',
             'reference' => 'nullable|string|max:255',
-            'status' => 'nullable|string|in:paid,pending,failed|max:50',
+            'status' => 'nullable|string|in:payer,en_attente,echoue|max:50',
         ]);
 
         // Update the payment
@@ -65,9 +64,9 @@ class PayementController extends Controller
         if ($request->has('payement_method')) {
             $payment->payement_method = $request->payement_method;
         }
-        if ($request->has('reference')) {
-            $payment->reference = $request->reference;
-        }
+        // if ($request->has('reference')) {
+        //     $payment->reference = $request->reference;
+        // }
         if ($request->has('status')) {
             $payment->status = $request->status;
         }
@@ -99,10 +98,18 @@ class PayementController extends Controller
     {
         $request->validate([
             'payement_id' => 'required|exists:payements,id',
+            'manager_id' => 'required|exists:managers,id'
         ]);
 
         // Get the payment details with associated unit
         $payment = Payement::with('unit')->find($request->payement_id);
+
+        if (!$payment || ($request->filled('manager_id') && $payment->manager_id != $request->manager_id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Payment not found!',
+            ], 404);
+        }
 
         \Log::info('Payment retrieved', ['payement_id' => $payment->id]);
 

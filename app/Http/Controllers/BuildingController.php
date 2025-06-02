@@ -108,10 +108,18 @@ class BuildingController extends Controller
     {
         $request->validate([
             'building_id' => 'required|exists:buildings,id',
+            'manager_id' => 'required|exists:managers,id', // Optional, if you want to check manager
         ]);
 
         // Get the building with associated units
         $building = Building::with('units')->find($request->building_id);
+
+        if (!$building || ($request->filled('manager_id') && $building->manager_id != $request->manager_id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Building not found!',
+            ], 404);
+        }
 
         return response()->json([
             'status' => 'success',

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Manager;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 
 class ManagerController extends Controller
@@ -22,6 +21,10 @@ class ManagerController extends Controller
             'address' => 'nullable|string',
             'city' => 'nullable|string',
             'country' => 'nullable|string',
+            'buildings_count' => 'nullable|integer',
+            'role' => 'nullable|string|in:admin,manager|max:50',
+            'status' => 'nullable|string|in:active,inactive,suspended|max:50',
+            'reference' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -38,11 +41,15 @@ class ManagerController extends Controller
             'address' => $request->address,
             'city' => $request->city,
             'country' => $request->country,
+            'role' => $request->role ?? 'manager', // Default to 'manager' if not provided
+            'status' => $request->status ?? 'active', // Default to 'active' if not provided
+            'buildings_count' => $request->buildings_count ?? 5, // Default to 5 if not provided
         ]);
 
         return response()->json([
+            'status' => 'success',
             'token' => $manager->createToken('manager-api-token')->plainTextToken,
-            'manager' => $manager,
+            'data' => $manager,
         ], 201);
     }
 

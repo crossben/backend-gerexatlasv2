@@ -133,6 +133,7 @@ class UnitController extends Controller
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
+            'manager_id' => 'nullable|exists:managers,id',
         ]);
 
         // Get the unit with its associated building and payments ordered by newest first
@@ -143,7 +144,7 @@ class UnitController extends Controller
             }
         ])->find($request->unit_id);
 
-        if (!$unit) {
+        if (!$unit || ($request->filled('manager_id') && $unit->manager_id != $request->manager_id)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unit not found!',
@@ -194,12 +195,12 @@ class UnitController extends Controller
         // Get units by manager
         $units = Unit::where('manager_id', $request->manager_id)->with('building')->get();
 
-        if ($units->isEmpty()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'No units found for this manager!',
-            ], 404);
-        }
+        // if ($units->isEmpty()) {
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'message' => 'No units found for this manager!',
+        //     ], 404);
+        // }
 
         \Log::info('Units retrieved by manager ID', ['manager_id' => $request->manager_id]);
 

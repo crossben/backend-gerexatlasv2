@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     // payment routes
     Route::post('/payments/create', [PayementController::class, 'createPayment']); // tested
     Route::put('/payments/update/{id}', [PayementController::class, 'updatePayment']); // tested
-    Route::delete('/payments/delete/', [PayementController::class, 'deletePayement']);  // tested
+    Route::delete('/payments/delete/{id}', [PayementController::class, 'deletePayement']);  // tested
     Route::get('/payments/{id}', [PayementController::class, 'getPaymentById']); // tested
     Route::get('/payments/unit/{id}', [PayementController::class, 'getPaymentsByUnitId']); // tested
     Route::get('/payments/tenant/{id}', [PayementController::class, 'getPaymentsByTenantId']); // tested
