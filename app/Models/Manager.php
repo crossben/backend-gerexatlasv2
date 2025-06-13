@@ -45,15 +45,11 @@ class Manager extends Authenticatable
         return $this->hasMany(Building::class);
     }
 
-    public function contracts()
+    public function payements()
     {
-        return $this->hasMany(Contract::class);
+        return $this->hasMany(Payement::class);
     }
 
-    public function tenant()
-    {
-        return $this->hasMany(Tenant::class);
-    }
     public function units()
     {
         return $this->hasMany(Unit::class);

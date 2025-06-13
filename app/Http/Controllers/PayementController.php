@@ -139,9 +139,10 @@ class PayementController extends Controller
             'manager_id' => 'required|exists:managers,id',
         ]);
 
-        // Get all payments for a specific manager
+        // Get all payments for a specific manager, ordered from most recent
         $payments = Payement::with(['unit'])
             ->where('manager_id', $request->manager_id)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         \Log::info('Payments retrieved for manager', ['manager_id' => $request->manager_id]);
@@ -156,10 +157,13 @@ class PayementController extends Controller
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
+            'manager_id' => 'required|exists:managers,id',
         ]);
 
         // Get all payments for a specific unit
-        $payments = Payement::where('unit_id', $request->unit_id)->get();
+        $payments = Payement::where('unit_id', $request->unit_id)
+            ->where('manager_id', $request->manager_id)
+            ->get();
 
         \Log::info('Payments retrieved for unit', ['unit_id' => $request->unit_id]);
 

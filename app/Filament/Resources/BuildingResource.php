@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class BuildingResource extends Resource
 {
@@ -26,123 +27,118 @@ class BuildingResource extends Resource
     protected static ?string $pluralModelLabel = 'Buildings';
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
+        return $form->schema([
+            // Basic Info Section
+            Forms\Components\Section::make('Basic Information')
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->required()
+                        ->label('Name'),
 
-                // Organization Section
-                // Forms\Components\Section::make('Organization Details')
-                //     ->schema([
-                //         Forms\Components\Select::make('organization_id')
-                //             ->relationship('organization', 'name')
-                //             ->required()
-                //             ->label('Organization'),
-                //     ]),
+                    Forms\Components\TextInput::make('type')
+                        ->required()
+                        ->label('Type'),
+                ]),
 
-                // Basic Info Section
-                Forms\Components\Section::make('Basic Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->label('Name'),
+            // Location Section
+            Forms\Components\Section::make('Location')
+                ->schema([
+                    Forms\Components\TextInput::make('city')
+                        ->label('City'),
 
-                        Forms\Components\TextInput::make('type')
-                            ->required()
-                            ->label('Type'),
+                    Forms\Components\TextInput::make('address')
+                        ->label('Address'),
+                ]),
 
-                        Forms\Components\TextInput::make('number_of_units')
-                            ->label('Number of Units'),
-                    ]),
+            // Management Section
+            Forms\Components\Section::make('Management')
+                ->schema([
+                    Forms\Components\Select::make('manager_id')
+                        ->label('Manager')
+                        ->required()
+                        ->relationship('manager', 'first_name')
+                        ->searchable()
+                        ->preload()
+                        ->placeholder('Select a manager'),
+                ]),
 
-                // Location Section
-                Forms\Components\Section::make('Location')
-                    ->schema([
-                        Forms\Components\TextInput::make('city')
-                            ->label('City'),
+            // Description Section
+            Forms\Components\Section::make('Additional Details')
+                ->schema([
+                    Forms\Components\Textarea::make('description')
+                        ->label('Description')
+                        ->maxLength(500)
+                        ->placeholder('Enter description here'),
 
-                        Forms\Components\TextInput::make('address')
-                            ->label('Address'),
-                    ]),
+                    Forms\Components\Textarea::make('reference')
+                        ->label('Reference')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('Enter reference here'),
 
-                // Management Section
-                Forms\Components\Section::make('Management')
-                    ->schema([
-                        Forms\Components\Select::make('manager_id')
-                            ->label('Manager')
-                            ->required()
-                            ->relationship('manager', 'first_name')
-                            ->searchable()
-                            ->preload()
-                            ->placeholder('Select a manager'),
-                    ]),
-
-                // Description Section
-                Forms\Components\Section::make('Additional Details')
-                    ->schema([
-                        Forms\Components\Textarea::make('description')
-                            ->label('Description')
-                            ->maxLength(500)
-                            ->placeholder('Enter description here'),
-                        Forms\Components\Textarea::make('reference')
-                            ->label('Reference')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('Enter reference here'),
-                        Forms\Components\Select::make('status')
-                            ->label('Status')
-                            ->options([
-                                'active' => 'Active',
-                                'inactive' => 'Inactive',
-                                'suspended' => 'Suspended',
-                            ])
-                            ->required()
-                            ->placeholder('Enter status here')
-                            ->default('Active'),
-                    ]),
-            ]);
+                    Forms\Components\Select::make('status')
+                        ->label('Status')
+                        ->options([
+                            'active' => 'Active',
+                            'inactive' => 'Inactive',
+                            'suspended' => 'Suspended',
+                        ])
+                        ->required()
+                        ->placeholder('Select a status')
+                        ->default('active'),
+                ]),
+        ]);
     }
 
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->sortable()
-                    ->searchable()
-                    ->label('ID'),
-                Tables\Columns\TextColumn::make('name')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Name'),
-                Tables\Columns\TextColumn::make('type')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Type'),
-                Tables\Columns\TextColumn::make('number_of_units')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Number of Units'),
-                Tables\Columns\TextColumn::make('city')
-                    ->sortable()
-                    ->searchable()
-                    ->label('City'),
-                Tables\Columns\TextColumn::make('manager.first_name')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Manager'),
-                Tables\Columns\TextColumn::make('address')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Address'),
-                Tables\Columns\TextColumn::make('description')
-                    ->sortable()
-                    ->searchable()
-                    ->label('Description'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->sortable()
-                    ->dateTime()
-                    ->label('Created At'),
-            ])
+        return $table->columns([
+            Tables\Columns\TextColumn::make('name')
+                ->sortable()
+                ->searchable()
+                ->label('Name'),
+
+            Tables\Columns\TextColumn::make('type')
+                ->sortable()
+                ->searchable()
+                ->label('Type'),
+
+            Tables\Columns\TextColumn::make('city')
+                ->sortable()
+                ->searchable()
+                ->label('City'),
+
+            Tables\Columns\TextColumn::make('address')
+                ->sortable()
+                ->searchable()
+                ->label('Address'),
+
+            Tables\Columns\TextColumn::make('manager.first_name')
+                ->sortable()
+                ->searchable()
+                ->label('Manager'),
+
+            Tables\Columns\TextColumn::make('description')
+                ->limit(50)
+                ->label('Description'),
+
+            Tables\Columns\TextColumn::make('reference')
+                ->label('Reference'),
+
+            Tables\Columns\BadgeColumn::make('status')
+                ->colors([
+                    'primary' => 'active',
+                    'secondary' => 'inactive',
+                    'danger' => 'suspended',
+                ])
+                ->label('Status'),
+            Tables\Columns\TextColumn::make('created_at')
+                ->dateTime()
+                ->sortable()
+                ->label('Created At')
+        ])
+
             ->filters([
                 Tables\Filters\Filter::make('created_today')
                     ->label('Aujourd\'hui')
@@ -172,7 +168,41 @@ class BuildingResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin')
+                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+
+                    Tables\Actions\BulkAction::make('exportCsv')
+                        ->label('Export to CSV')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(function (Collection $records) {
+                            $csvData = $records->map(function ($record) {
+                                return $record->only([
+                                    'id',
+                                    'name',
+                                    'type',
+                                    'city',
+                                    'address',
+                                    'status',
+                                    'reference',
+                                    'created_at',
+                                ]);
+                            });
+
+                            $filename = 'export-buildings-' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+                            $stream = fopen('php://temp', 'r+');
+                            fputcsv($stream, array_keys($csvData->first() ?? []));
+                            foreach ($csvData as $row) {
+                                fputcsv($stream, $row);
+                            }
+                            rewind($stream);
+
+                            return response()->streamDownload(function () use ($stream) {
+                                fpassthru($stream);
+                            }, $filename, [
+                                'Content-Type' => 'text/csv',
+                                'Content-Disposition' => "attachment; filename={$filename}",
+                            ]);
+                        }),
                 ]),
             ]);
     }

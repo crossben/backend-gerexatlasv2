@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class PayementResource extends Resource
 {
@@ -23,36 +24,51 @@ class PayementResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Payment Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('amount')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('status')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('payement_method')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('reference')
-                            ->required()
-                            ->maxLength(255),
-                    ]),
-                Forms\Components\Section::make('Associations')
-                    ->schema([
-                        Forms\Components\Select::make('tenant_id')
-                            ->relationship('tenant', 'name')
-                            ->required(),
-                        Forms\Components\Select::make('unit_id')
-                            ->relationship('unit', 'name')
-                            ->required(),
-                        Forms\Components\Select::make('building_id')
-                            ->relationship('building', 'name')
-                            ->required(),
-                    ]),
-            ]);
+        return $form->schema([
+            Forms\Components\Section::make('Payment Details')
+                ->schema([
+                    Forms\Components\TextInput::make('amount')
+                        ->numeric()
+                        ->required()
+                        ->label('Amount'),
+
+                    Forms\Components\Select::make('payment_method') // Use exact model key: change to 'payement_method' if it's misspelled in DB
+                        ->options([
+                            'cash' => 'Cash',
+                            'bank_transfer' => 'Bank Transfer',
+                            'credit_card' => 'Credit Card',
+                        ])
+                        ->required()
+                        ->label('Payment Method'),
+
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'pending' => 'Pending',
+                            'completed' => 'Completed',
+                            'failed' => 'Failed',
+                        ])
+                        ->required()
+                        ->label('Status'),
+
+                    Forms\Components\TextInput::make('reference')
+                        ->required()
+                        ->maxLength(255)
+                        ->label('Reference'),
+                ]),
+
+            Forms\Components\Section::make('Associations')
+                ->schema([
+                    Forms\Components\Select::make('unit_id')
+                        ->relationship('unit', 'name')
+                        ->required()
+                        ->label('Unit'),
+
+                    Forms\Components\Select::make('manager_id')
+                        ->relationship('manager', 'first_name')
+                        ->required()
+                        ->label('Manager'),
+                ]),
+        ]);
     }
 
 
@@ -62,37 +78,56 @@ class PayementResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Payment ID'),
+
                 Tables\Columns\TextColumn::make('amount')
+                    ->money('usd', true)
                     ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->sortable()
-                    ->searchable(),
+                    ->label('Amount'),
+
                 Tables\Columns\TextColumn::make('unit.name')
                     ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('building.name')
+                    ->searchable()
+                    ->label('Unit Name'),
+
+                Tables\Columns\TextColumn::make('manager.first_name')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Manager'),
+
+                Tables\Columns\TextColumn::make('payement_method') // Update to 'payement_method' if the typo is in your DB
+                    ->sortable()
+                    ->searchable()
+                    ->label('Payment Method'),
+
                 Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'success' => 'completed',
+                        'warning' => 'pending',
+                        'danger' => 'failed',
+                    ])
                     ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('payement_method')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Status'),
+
                 Tables\Columns\TextColumn::make('reference')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Reference'),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
-                    ->searchable()
-                    ->dateTime(),
+                    ->dateTime()
+                    ->label('Created At'),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->sortable()
-                    ->searchable()
-                    ->dateTime(),
+                    ->dateTime()
+                    ->label('Updated At'),
             ])
+
             ->filters([
                 Tables\Filters\Filter::make('created_today')
                     ->label('Aujourd\'hui')
@@ -122,7 +157,39 @@ class PayementResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                    Tables\Actions\BulkAction::make('exportCsv')
                         ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin')
+                        ->label('Export to CSV')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(function (Collection $records) {
+                            $csvData = $records->map(function ($record) {
+                                return $record->only([
+                                    'unit_id',
+                                    'manager_id',
+                                    'amount',
+                                    'payement_method',
+                                    'reference',
+                                    'status',
+                                ]);
+                            });
+
+                            $filename = 'export-payments-' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+                            $stream = fopen('php://temp', 'r+');
+                            fputcsv($stream, array_keys($csvData->first() ?? []));
+                            foreach ($csvData as $row) {
+                                fputcsv($stream, $row);
+                            }
+                            rewind($stream);
+
+                            return response()->streamDownload(function () use ($stream) {
+                                fpassthru($stream);
+                            }, $filename, [
+                                'Content-Type' => 'text/csv',
+                                'Content-Disposition' => "attachment; filename={$filename}",
+                            ]);
+                        }),
                 ]),
             ]);
     }

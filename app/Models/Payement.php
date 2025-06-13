@@ -9,22 +9,14 @@ class Payement extends Model
 {
     use HasFactory;
 
-    // public function invoice()
-    // {
-    //     return $this->belongsTo(Invoice::class);
-    // }
-    // public function tenant()
-    // {
-    //     return $this->belongsTo(Tenant::class);
-    // }
     public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
 
-    public function building()
+    public function manager()
     {
-        return $this->belongsTo(Building::class);
+        return $this->belongsTo(Manager::class);
     }
 
     protected $fillable = [

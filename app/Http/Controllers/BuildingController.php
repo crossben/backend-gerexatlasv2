@@ -161,8 +161,11 @@ class BuildingController extends Controller
             'manager_id' => 'required|exists:managers,id',
         ]);
 
-        // Get buildings by manager with associated units
-        $buildings = Building::with('units')->where('manager_id', $request->manager_id)->get();
+        // Get buildings by manager with associated units, ordered by most recent
+        $buildings = Building::with('units')
+            ->where('manager_id', $request->manager_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
         $count = $buildings->count();
 
         return response()->json([
