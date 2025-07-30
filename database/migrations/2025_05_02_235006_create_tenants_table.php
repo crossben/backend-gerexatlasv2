@@ -12,14 +12,14 @@ return new class extends Migration {
     {
         Schema::create('tenants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('unit_id')->constrained()->onDelete('set null')->nullable();
+            $table->foreignId('unit_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('manager_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
-            $table->string('contact')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('nationality')->nullable();
             $table->string('reference')->unique();
-            $table->string('status')->default('active');
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
             $table->timestamps();
         });
     }

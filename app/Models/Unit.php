@@ -13,25 +13,29 @@ class Unit extends Model
     {
         return $this->belongsTo(Building::class);
     }
-
-    public function tenant()
+    public function payements()
     {
-        return $this->hasOne(Tenant::class);
+        return $this->hasMany(Payement::class);
     }
-
-    public function contract()
+    public function manager()
     {
-        return $this->hasMany(Contract::class);
+        return $this->belongsTo(Manager::class);
     }
 
     protected $fillable = [
         'building_id',
-        'tenant_id',
+        'manager_id',
         'name',
-        'surface',
         'type',
-        'status',
+        'tenant_name',
+        'tenant_email',
+        'tenant_phone',
+        'start_date',
+        'end_date',
+        'rent_amount',
+        'contract_type',
         'reference',
+        'status',
     ];
     protected $casts = [
         'created_at' => 'datetime',
@@ -40,16 +44,8 @@ class Unit extends Model
     ];
 
     protected $dates = [
-        'created_at', 
+        'created_at',
         'updated_at',
     ];
-    // public function invoices()
-    // {
-    //     return $this->hasMany(Invoice::class);
-    // }
-    public function payements()
-    {
-        return $this->hasMany(Payement::class);
-    }
 }
 

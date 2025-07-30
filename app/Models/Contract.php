@@ -27,8 +27,8 @@ class Contract extends Model
     protected $fillable = [
         'tenant_id',
         'unit_id',
+        'manager_id',
         'contract_type',
-        'contract_body',
         'start_date',
         'end_date',
         'rent_amount',
@@ -42,6 +42,7 @@ class Contract extends Model
         'updated_at' => 'datetime',
         'reference' => 'string',
         'status' => 'string',
+        'manager_id' => 'integer',  
     ];
     protected $dates = [
         'start_date',

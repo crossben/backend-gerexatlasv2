@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Manager extends Authenticatable
 {
     use HasFactory, Notifiable;
-
+    use HasApiTokens;
     protected $fillable = [
-        'building_id',
         'first_name',
         'last_name',
         'email',
@@ -24,6 +24,11 @@ class Manager extends Authenticatable
         'address',
         'city',
         'country',
+        'buildings_count',
+    ];
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
     protected $casts = [
         'created_at' => 'datetime',
@@ -38,5 +43,15 @@ class Manager extends Authenticatable
     public function buildings()
     {
         return $this->hasMany(Building::class);
+    }
+
+    public function payements()
+    {
+        return $this->hasMany(Payement::class);
+    }
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
     }
 }

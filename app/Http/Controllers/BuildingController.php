@@ -13,7 +13,7 @@ class BuildingController extends Controller
             'manager_id' => 'required|exists:managers,id',
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'number_of_units' => 'required|integer|min:1',
+            // 'number_of_units' => 'required|integer|min:1',
             'city' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
@@ -21,23 +21,158 @@ class BuildingController extends Controller
             'status' => 'nullable|string|in:active,inactive,suspended|max:50',
         ]);
 
-        // Create a new building
-        $building = new Building();
-        $building->manager_id = $request->manager_id;
-        $building->name = $request->name;
-        $building->type = $request->type;
-        $building->number_of_units = $request->number_of_units;
-        $building->city = $request->city;
-        $building->address = $request->address;
-        $building->description = $request->description;
-        $building->reference = $request->reference;
-        $building->status = $request->status ?? 'active'; // Default status to active if not provided
-        $building->save();
+        // Create a new building using the model
+        $building = Building::create([
+            'manager_id' => $request->manager_id,
+            'name' => $request->name,
+            'type' => $request->type,
+            'number_of_units' => $request->number_of_units,
+            'city' => $request->city,
+            'address' => $request->address,
+            'description' => $request->description,
+            'reference' => $request->reference ?? uniqid('imb_'),
+            'status' => $request->status ?? 'active',
+        ]);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Building created successfully!',
             'data' => $building,
         ], 201);
+    }
+
+    public function updateBuilding(Request $request)
+    {
+        $request->validate([
+            'building_id' => 'required|exists:buildings,id',
+            'name' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'number_of_units' => 'nullable|integer|min:1',
+            'city' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'reference' => 'nullable|string|max:255',
+            'status' => 'nullable|string|in:active,inactive,suspended|max:50',
+        ]);
+
+        // Update the building
+        $building = Building::find($request->building_id);
+        if ($request->has('name')) {
+            $building->name = $request->name;
+        }
+        if ($request->has('type')) {
+            $building->type = $request->type;
+        }
+        if ($request->has('number_of_units')) {
+            $building->number_of_units = $request->number_of_units;
+        }
+        if ($request->has('city')) {
+            $building->city = $request->city;
+        }
+        if ($request->has('address')) {
+            $building->address = $request->address;
+        }
+        if ($request->has('description')) {
+            $building->description = $request->description;
+        }
+        if ($request->has('reference')) {
+            $building->reference = $request->reference;
+        }
+        if ($request->has('status')) {
+            $building->status = $request->status;
+        }
+        $building->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Building updated successfully!',
+            'data' => $building,
+        ], 200);
+    }
+    public function deleteBuilding(Request $request)
+    {
+        $request->validate([
+            'building_id' => 'required|exists:buildings,id',
+        ]);
+
+        // Delete the building
+        $building = Building::find($request->building_id);
+        $building->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Building deleted successfully!',
+        ], 200);
+    }
+    public function getBuildingById(Request $request)
+    {
+        $request->validate([
+            'building_id' => 'required|exists:buildings,id',
+            'manager_id' => 'required|exists:managers,id', // Optional, if you want to check manager
+        ]);
+
+        // Get the building with associated units
+        $building = Building::with('units')->find($request->building_id);
+
+        if (!$building || ($request->filled('manager_id') && $building->manager_id != $request->manager_id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Building not found!',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Building retrieved successfully!',
+            'data' => $building,
+        ], 200);
+    }
+
+    public function getBuildingsByReference(Request $request)
+    {
+        $request->validate([
+            'reference' => 'required|string|max:255',
+        ]);
+
+        // Get buildings by reference
+        $buildings = Building::with('units')->where('reference', $request->reference)->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Buildings retrieved successfully!',
+            'data' => $buildings,
+        ], 200);
+    }
+
+    public function getAllBuildings(Request $request)
+    {
+        // Get all buildings
+        $buildings = Building::all();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All buildings retrieved successfully!',
+            'data' => $buildings,
+        ], 200);
+    }
+    public function getBuildingsByManagerId(Request $request)
+    {
+        $request->validate([
+            'manager_id' => 'required|exists:managers,id',
+        ]);
+
+        // Get buildings by manager with associated units, ordered by most recent
+        $buildings = Building::with('units')
+            ->where('manager_id', $request->manager_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $count = $buildings->count();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Buildings retrieved successfully!',
+            'data' => $buildings,
+            'count' => $count,
+        ], 200);
     }
 }

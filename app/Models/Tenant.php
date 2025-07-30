@@ -10,8 +10,8 @@ class Tenant extends Model
     use HasFactory;
     protected $fillable = [
         'unit_id',
+        'manager_id',
         'name',
-        'contact',
         'email',
         'phone',
         'nationality',
@@ -48,6 +48,11 @@ class Tenant extends Model
     public function contracts()
     {
         return $this->hasOne(Contract::class);
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(Manager::class);
     }
 
 }

@@ -18,12 +18,22 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('password')->nullable();
             $table->string('role')->default('manager');
-            $table->string('status')->default('active');
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
             $table->string('reference')->unique();
             $table->string('address')->nullable();
             $table->string('city')->nullable();
             $table->string('country')->nullable();
+            $table->integer('buildings_count')->default(5);
             $table->timestamps();
+        });
+
+        Schema::create('managers_sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('manager_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
         });
     }
 
@@ -33,5 +43,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('managers');
+        Schema::dropIfExists('managers_sessions');
     }
 };

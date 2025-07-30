@@ -23,7 +23,6 @@ class Building extends Model
         'manager_id',
         'name',
         'type',
-        'number_of_units',
         'city',
         'address',
         'description',
@@ -34,7 +33,6 @@ class Building extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'number_of_units' => 'integer',
         'type' => 'string',
         'status' => 'string',
         'duration' => 'integer',

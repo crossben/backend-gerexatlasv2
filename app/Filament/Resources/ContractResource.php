@@ -28,7 +28,7 @@ class ContractResource extends Resource
         return $form
             ->schema([
                 // Tenant & Unit Selection Section
-                Forms\Components\Section::make('Tenant & Unit Details')
+                Forms\Components\Section::make('Tenant, Manager & Unit Details')
                     ->schema([
                         Forms\Components\Select::make('tenant_id')
                             ->relationship('tenant', 'name')
@@ -36,6 +36,13 @@ class ContractResource extends Resource
                             ->preload()
                             ->searchable(true)
                             ->label('Tenant'),
+
+                        Forms\Components\Select::make('manager_id')
+                            ->relationship('manager', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable(true)
+                            ->label('Manager'),
 
                         Forms\Components\Select::make('unit_id')
                             ->relationship('unit', 'name')
@@ -63,20 +70,20 @@ class ContractResource extends Resource
                     ]),
                 Forms\Components\Section::make('Important Documents')
                     ->schema([
-                        Forms\Components\RichEditor::make('contract_body')
-                            ->label('Contract Body')
-                            ->required()
-                            ->columnSpan('full')
-                            ->disableToolbarButtons([
-                                'attachFiles',
-                                'codeBlock',
-                                'h1',
-                                'h2',
-                                'h3',
-                                'h4',
-                                'h5',
-                                'h6',
-                            ]),
+                        // Forms\Components\RichEditor::make('contract_body')
+                        //     ->label('Contract Body')
+                        //     ->required()
+                        //     ->columnSpan('full')
+                        //     ->disableToolbarButtons([
+                        //         'attachFiles',
+                        //         'codeBlock',
+                        //         'h1',
+                        //         'h2',
+                        //         'h3',
+                        //         'h4',
+                        //         'h5',
+                        //         'h6',
+                        //     ]),
                         Forms\Components\Select::make('contract_type')
                             ->required()
                             ->label('Contract Type')
@@ -88,6 +95,7 @@ class ContractResource extends Resource
                                 'type4' => 'Type 4',
                             ])
                             ->searchable(),
+
                         Forms\Components\Textarea::make('reference')
                             ->label('Reference')
                             ->required()
@@ -123,6 +131,10 @@ class ContractResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->label('Unit Name'),
+                Tables\Columns\TextColumn::make('manager.name')
+                    ->sortable()
+                    ->searchable()
+                    ->label('Manager Name'),
                 Tables\Columns\TextColumn::make('start_date')
                     ->sortable()
                     ->date('Y-m-d')
@@ -161,14 +173,35 @@ class ContractResource extends Resource
                     ->label('Contract Type')
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('created_today')
+                    ->label('Aujourd\'hui')
+                    ->query(fn(Builder $query): Builder => $query->whereDate('created_at', now()->toDateString())),
+                Tables\Filters\Filter::make('created_this_week')
+                    ->label('Cette semaine')
+                    ->query(fn(Builder $query): Builder => $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])),
+                Tables\Filters\Filter::make('created_this_month')
+                    ->label('Ce mois-ci')
+                    ->query(fn(Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
+                Tables\Filters\Filter::make('created_this_year')
+                    ->label('Cette année')
+                    ->query(fn(Builder $query): Builder => $query->whereYear('created_at', now()->year)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Create')
+                    ->icon('heroicon-o-plus')
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                Tables\Actions\ViewAction::make()
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin')
                 ]),
             ]);
     }
@@ -187,5 +220,30 @@ class ContractResource extends Resource
             'create' => Pages\CreateContract::route('/create'),
             'edit' => Pages\EditContract::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin';
+    }
+
+    public static function canView($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
     }
 }

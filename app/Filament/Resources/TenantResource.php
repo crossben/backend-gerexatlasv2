@@ -9,13 +9,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationGroup = 'Human Resources';
     protected static ?string $navigationLabel = 'Tenants';
 
     public static function form(Form $form): Form
@@ -32,6 +34,13 @@ class TenantResource extends Resource
                             ->preload()
                             ->label('Unit Name')
                             ->helperText('Choose the appropriate unit from the list.'),
+                        Forms\Components\Select::make('building_id')
+                            ->relationship('building', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->label('Building Name')
+                            ->helperText('Choose the appropriate building from the list.'),
                     ]),
 
                 Forms\Components\Section::make('Personal Information')
@@ -126,14 +135,35 @@ class TenantResource extends Resource
                     ->label('Updated At'),
             ])
             ->filters([
-                //
+                Tables\Actions\CreateAction::make()
+                    ->label('Create')
+                    ->icon('heroicon-o-plus')
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                Tables\Filters\Filter::make('created_today')
+                    ->label('Aujourd\'hui')
+                    ->query(fn(Builder $query): Builder => $query->whereDate('created_at', now()->toDateString())),
+                Tables\Filters\Filter::make('created_this_week')
+                    ->label('Cette semaine')
+                    ->query(fn(Builder $query): Builder => $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])),
+                Tables\Filters\Filter::make('created_this_month')
+                    ->label('Ce mois-ci')
+                    ->query(fn(Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
+                Tables\Filters\Filter::make('created_this_year')
+                    ->label('Cette année')
+                    ->query(fn(Builder $query): Builder => $query->whereYear('created_at', now()->year)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin'),
+                Tables\Actions\ViewAction::make()
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin')
                 ]),
             ]);
     }
@@ -152,5 +182,30 @@ class TenantResource extends Resource
             'create' => Pages\CreateTenant::route('/create'),
             'edit' => Pages\EditTenant::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin';
+    }
+
+    public static function canView($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin' || 'admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin';
     }
 }

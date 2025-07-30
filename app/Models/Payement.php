@@ -9,32 +9,26 @@ class Payement extends Model
 {
     use HasFactory;
 
-    // public function invoice()
-    // {
-    //     return $this->belongsTo(Invoice::class);
-    // }
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
     public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
 
+    public function manager()
+    {
+        return $this->belongsTo(Manager::class);
+    }
+
     protected $fillable = [
         'unit_id',
-        'tenant_id',
-        'receipt',
+        'manager_id',
         'amount',
-        'date',
-        'method',
+        'payement_method',
         'reference',
         'status',
     ];
 
     protected $casts = [
-        'date' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'reference' => 'string',
@@ -44,7 +38,6 @@ class Payement extends Model
         'status' => 'pending',
     ];
     protected $dates = [
-        'date',
         'created_at',
         'updated_at',
     ];
