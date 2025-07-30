@@ -172,6 +172,7 @@ class BuildingResource extends Resource
 
                     Tables\Actions\BulkAction::make('exportCsv')
                         ->label('Export to CSV')
+                        ->visible(fn() => \Illuminate\Support\Facades\Auth::user()->role === 'ultra_admin')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (Collection $records) {
                             $csvData = $records->map(function ($record) {
